@@ -92,8 +92,10 @@ Make sure you have [Node.js](https://nodejs.org/) installed (version 18+ recomme
 ## 📁 File Structure
 
 ```text
+├── public/
+│   └── videos/              # Video assets and background loops
 ├── src/
-│   ├── assets/              # Static media assets (videos, graphics)
+│   ├── assets/              # Static media assets (images, graphics)
 │   ├── components/
 │   │   ├── layout/          # Global layout managers (Weather, UI)
 │   │   └── ui/              # Interactive individual components:
