@@ -400,19 +400,17 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           <Lightning hue={themeHue} xOffset={0} speed={1.2} intensity={0.5} size={1.5} />
         </div>
         
-        {/* The Aura ABOVE the sphere (unbounded by overflow) */}
-        <div
-          className="z-20 absolute left-1/2 transform -translate-x-1/2 top-[70%] w-[800px] h-[150px] rounded-t-full pointer-events-none"
-          style={{
-            '--hue': themeHue,
-            background: `radial-gradient(ellipse at top, hsl(var(--hue), 100%, 65%) 0%, hsl(var(--hue), 80%, 40%, 0.4) 40%, transparent 80%)`,
-            filter: 'blur(10px)',
-            mixBlendMode: 'screen',
-          }}
-        />
-
         {/* Planet/sphere orb + aura glow */}
         <div className="z-10 absolute top-[70%] left-1/2 transform -translate-x-1/2 w-[800px] h-[800px] backdrop-blur-3xl rounded-full bg-[radial-gradient(circle_at_50%_90%,_#2e0c1f_15%,_#000000de_70%,_#000000ed_100%)] overflow-hidden">
+          <div
+            className="soft-aura absolute inset-x-0 top-0 h-[150px] rounded-t-full pointer-events-none"
+            style={{
+              '--hue': themeHue,
+              background: `radial-gradient(ellipse at top, hsl(var(--hue), 100%, 65%) 0%, hsl(var(--hue), 80%, 40%, 0.4) 40%, transparent 80%)`,
+              filter: 'blur(10px)',
+              mixBlendMode: 'screen',
+            }}
+          />
         </div>
       </motion.div>
     </div>
