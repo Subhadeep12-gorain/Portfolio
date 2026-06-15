@@ -259,7 +259,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="absolute left-[0%] top-[32%] md:left-10 md:top-40 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-left"
+          className="absolute left-[5%] top-[32%] md:left-10 md:top-40 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-left"
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={leftCtrl} variants={leftBadgeVariants} initial="visible">
@@ -287,7 +287,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="absolute right-[0%] top-[32%] md:right-10 md:top-40 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-right"
+          className="absolute right-[5%] top-[32%] md:right-10 md:top-40 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-right"
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={rightCtrl} variants={rightBadgeVariants} initial="visible">
@@ -391,20 +391,23 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           {/* Transparent overlay — let GlobalWeatherManager show through */}
           <div className="absolute inset-0 bg-black/30" />
           <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-b from-pink-500/8 to-purple-600/8 blur-3xl" />
-        <div className="absolute top-0 w-[100%] left-1/2 transform -translate-x-1/2 h-full">
+        <div className="absolute top-0 w-[100%] left-1/2 transform -translate-x-1/2 h-full z-20 pointer-events-none">
           <Lightning hue={themeHue} xOffset={0} speed={1.2} intensity={0.5} size={1.5} />
         </div>
-        {/* Planet/sphere orb + aura glow — untouched */}
+        
+        {/* The Aura ABOVE the sphere (unbounded by overflow) */}
+        <div
+          className="z-20 absolute left-1/2 transform -translate-x-1/2 top-[70%] w-[800px] h-[150px] rounded-t-full pointer-events-none"
+          style={{
+            '--hue': themeHue,
+            background: `radial-gradient(ellipse at top, hsl(var(--hue), 100%, 65%) 0%, hsl(var(--hue), 80%, 40%, 0.4) 40%, transparent 80%)`,
+            filter: 'blur(10px)',
+            mixBlendMode: 'screen',
+          }}
+        />
+
+        {/* Planet/sphere orb + aura glow */}
         <div className="z-10 absolute top-[70%] left-1/2 transform -translate-x-1/2 w-[800px] h-[800px] backdrop-blur-3xl rounded-full bg-[radial-gradient(circle_at_50%_90%,_#2e0c1f_15%,_#000000de_70%,_#000000ed_100%)] overflow-hidden">
-          <div
-            className="soft-aura absolute inset-x-0 top-0 h-[150px] rounded-t-full pointer-events-none"
-            style={{
-              '--hue': themeHue,
-              background: `radial-gradient(ellipse at top, hsl(var(--hue), 100%, 65%) 0%, hsl(var(--hue), 80%, 40%, 0.4) 40%, transparent 80%)`,
-              filter: 'blur(10px)',
-              mixBlendMode: 'screen',
-            }}
-          />
         </div>
       </motion.div>
     </div>

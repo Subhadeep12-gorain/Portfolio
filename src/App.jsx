@@ -969,7 +969,7 @@ function App() {
                   scale: [1, 1.04, 1],
                 }}
                 transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: 6.6, times: [0, 0.5, 1] }}
-                className="absolute left-[40%] top-[8%] text-[12vw] text-white leading-none"
+                className="absolute left-[50%] -translate-x-1/2 top-[8%] text-[12vw] text-white leading-none"
               >
                 <motion.div style={{ x: kanji3X, y: kanji3Y }}>脳</motion.div>
               </motion.div>
