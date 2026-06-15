@@ -878,9 +878,9 @@ function App() {
       {/* ====== SECTION 4: About Me ====== */}
       <div id="about-wrapper" data-snap-section className="relative bg-transparent min-h-fit py-section-gap">
         
-        {/* STICKY BACKGROUND LAYER FOR MOBILE, ABSOLUTE FOR DESKTOP */}
+        {/* BACKGROUND LAYER (Absolute to fill full section on all devices) */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
-          <div className="sticky top-0 h-screen w-full overflow-hidden md:relative md:h-full">
+          <div className="relative h-full w-full overflow-hidden">
             <FogEllipses />
 
             {/* Katakana name watermark — bottom-left, ghost */}
@@ -907,7 +907,11 @@ function App() {
             {/* LAYER 1: Background Neural Grid — themeHue tinted */}
             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
               <motion.div
-                className="absolute inset-0 w-full h-[200%] neural-grid-animate"
+                className="absolute inset-0 w-full h-[200%]"
+                animate={{
+                  backgroundPosition: ["0px 0px", "60px 60px"]
+                }}
+                transition={{ repeat: Infinity, duration: 15, ease: "linear" }}
                 style={{
                   backgroundImage: `radial-gradient(circle, hsla(${themeHue}, 70%, 65%, 0.055) 1px, transparent 1px)`,
                   backgroundSize: '60px 60px',
@@ -1071,7 +1075,9 @@ function App() {
             <motion.div
               variants={aboutItemVariants}
               whileHover={{ rotateX: 360 }}
-              transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+              whileInView={{ rotateY: [0, 10, -10, 0], rotateX: [0, 5, -5, 0] }}
+              viewport={{ once: false, margin: "-10%" }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               style={{ perspective: 1000 }}
               className="w-full max-w-lg"
             >

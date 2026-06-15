@@ -128,8 +128,13 @@ const Lightning = ({ hue = 230, xOffset = 0, speed = 1, intensity = 1, size = 1 
 // ─────────────────────────────────────────────────────────────────────────────
 // BadgeContent — pure content, no positioning
 // ─────────────────────────────────────────────────────────────────────────────
-const BadgeContent = ({ name, value }) => (
-  <div className="group" style={{ cursor: 'pointer' }}>
+const BadgeContent = ({ name, value, floatDelay = 0 }) => (
+  <motion.div 
+    className="group" 
+    style={{ cursor: 'pointer' }}
+    animate={{ y: [0, -12, 0] }}
+    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: floatDelay }}
+  >
     <div className="flex items-center gap-2 relative">
       <div className="relative">
         <div className="w-2 h-2 bg-white rounded-full group-hover:animate-pulse" />
@@ -141,7 +146,7 @@ const BadgeContent = ({ name, value }) => (
         <div className="absolute -inset-2 bg-white/10 rounded-lg blur-md opacity-70 -z-10 transition-opacity duration-300 group-hover:opacity-100" />
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -258,7 +263,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={leftCtrl} variants={leftBadgeVariants} initial="visible">
-            <BadgeContent name="Machine Learning" value="XGBoost" />
+            <BadgeContent name="Machine Learning" value="XGBoost" floatDelay={0} />
           </motion.div>
         </motion.div>
 
@@ -272,7 +277,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={leftCtrl} variants={leftBadgeVariants} initial="visible">
-            <BadgeContent name="Python" value="Scikit-learn" />
+            <BadgeContent name="Python" value="Scikit-learn" floatDelay={1.2} />
           </motion.div>
         </motion.div>
 
@@ -286,7 +291,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={rightCtrl} variants={rightBadgeVariants} initial="visible">
-            <BadgeContent name="Data Engineering" value="Pandas" />
+            <BadgeContent name="Data Engineering" value="Pandas" floatDelay={2.4} />
           </motion.div>
         </motion.div>
 
@@ -300,7 +305,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={rightCtrl} variants={rightBadgeVariants} initial="visible">
-            <BadgeContent name="JLPT N4" value="Japan" />
+            <BadgeContent name="JLPT N4" value="Japan" floatDelay={3.6} />
           </motion.div>
         </motion.div>
 

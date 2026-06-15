@@ -44,7 +44,7 @@
     "section_label": "SELECTED WORK",
     "title": "技術研究とプロジェクト",
     "p1_title": "日本の観光需要予測",
-    "p1_desc": "観光庁のオープンデータに基づく ML 予測モデル。MEXT 奨学金に応募済み。",
+    "p1_desc": "観光庁のオープンデータに基づく ML 予測モデル。",
     "p2_title": "E コマースプラットフォーム",
     "p3_title": "NoteApp",
     "p3_desc": "React Native とローカルストレージで構築されたクロスプラットフォームのメモアプリ。",

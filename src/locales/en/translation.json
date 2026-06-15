@@ -44,7 +44,7 @@
     "section_label": "SELECTED WORK",
     "title": "Technical Research & Projects",
     "p1_title": "Japan Tourism Demand Forecasting",
-    "p1_desc": "ML forecasting model on Japan Tourism Agency open data. Applied for MEXT scholarship.",
+    "p1_desc": "ML forecasting model on Japan Tourism Agency open data.",
     "p2_title": "Ecommerce Platform",
     "p3_title": "NoteApp",
     "p3_desc": "Cross-platform note-taking app built with React Native and local storage.",

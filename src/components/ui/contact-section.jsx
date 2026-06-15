@@ -65,14 +65,27 @@ export const ContactSection = ({ themeHue = 220 }) => {
 
   return (
     <section id="contact" className="relative w-full max-w-5xl mx-auto py-12 overflow-hidden rounded-3xl min-h-[70vh] flex flex-col justify-center">
-      {/* Background Glow — themeHue */}
+      {/* Background Glow — Bottom */}
       <div
         className="absolute inset-0 pointer-events-none z-0"
         style={{
-          background: `
-            radial-gradient(ellipse at 50% 100%, hsla(${themeHue}, 50%, 35%, 0.35) 0%, transparent 65%),
-            radial-gradient(ellipse at 100% 50%, hsla(${themeHue}, 45%, 25%, 0.22) 0%, transparent 60%)
-          `
+          background: `radial-gradient(ellipse at 50% 100%, hsla(${themeHue}, 50%, 35%, 0.35) 0%, transparent 65%)`
+        }}
+      />
+      
+      {/* Background Glow — Side (Desktop) */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0 hidden md:block"
+        style={{
+          background: `radial-gradient(ellipse at 100% 50%, hsla(${themeHue}, 45%, 25%, 0.22) 0%, transparent 60%)`
+        }}
+      />
+      
+      {/* Background Glow — Center (Mobile) */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0 md:hidden"
+        style={{
+          background: `radial-gradient(ellipse at 50% 50%, hsla(${themeHue}, 45%, 25%, 0.22) 0%, transparent 60%)`
         }}
       />
 
@@ -102,7 +115,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
         })}
       </div>
 
-      {/* Content Asymmetrical Overlap Layout (Option 3) */}
+      {/* Content Asymmetrical Overlap Layout */}
       <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-0 items-center px-4 md:px-8 max-w-6xl mx-auto">
 
         {/* LEFT COLUMN: Cinematic Text & Magnetic Links */}

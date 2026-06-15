@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/purity */
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 
 export function FloatingSkillOrbs({ skillsData, activeNodeId, setActiveNodeId, themeHue }) {
   const orbPaths = useMemo(() => {

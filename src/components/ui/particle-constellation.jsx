@@ -10,7 +10,7 @@ import { useEffect, useRef } from 'react';
 
 const PARTICLE_COUNT = 50;
 const CONNECT_DIST   = 140; // px — max dist to draw connection line
-const DRIFT_SPEED    = 0.28;
+const DRIFT_SPEED    = 1.0;
 
 export function ParticleConstellation({ themeHue = 220 }) {
   const canvasRef = useRef(null);

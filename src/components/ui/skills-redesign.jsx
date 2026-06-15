@@ -309,6 +309,8 @@ export default function SkillsRedesign({ themeHue = 220 }) {
               exit={{ y: -cardYDir, opacity: 0, rotateX: cardYDir > 0 ? -15 : 15 }}
               transition={{ type: "spring", stiffness: 70, damping: 15 }}
               className="w-full relative z-10"
+              whileInView={{ rotateY: [0, 4, -4, 0], rotateX: [0, -2, 2, 0] }}
+              viewport={{ once: false, margin: "-10%" }}
               style={{ perspective: 1000 }}
             >
               <motion.div
