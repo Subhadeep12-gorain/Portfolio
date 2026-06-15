@@ -338,8 +338,8 @@ export default function SkillsRedesign({ themeHue = 220 }) {
                 <div className="absolute top-0 left-8 w-16 h-1 opacity-60 rounded-b-md z-30"
                   style={{ background: `linear-gradient(to right, hsl(${themeHue}, 75%, 72%), transparent)` }} />
                 
-                <div className="flex items-center gap-5 mb-6 mt-2 relative z-30">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center border"
+                <div className="flex flex-col md:flex-row items-center justify-center md:justify-start text-center md:text-left gap-4 md:gap-5 mb-6 mt-2 relative z-30">
+                  <div className="w-12 h-12 shrink-0 rounded-full flex items-center justify-center border"
                     style={{
                       background: `hsla(${themeHue}, 70%, 65%, 0.1)`,
                       color: `hsl(${themeHue}, 75%, 75%)`,
@@ -347,7 +347,7 @@ export default function SkillsRedesign({ themeHue = 220 }) {
                     }}>
                     <ActiveIcon size={24} />
                   </div>
-                  <h4 className="text-3xl md:text-4xl font-serif text-white font-bold tracking-wide" style={{ fontFamily: "'EB Garamond', serif" }}>
+                  <h4 className="text-2xl md:text-4xl font-serif text-white font-bold tracking-wide leading-tight break-words max-w-full" style={{ fontFamily: "'EB Garamond', serif" }}>
                     {activeNode.title}
                   </h4>
                 </div>
@@ -355,7 +355,7 @@ export default function SkillsRedesign({ themeHue = 220 }) {
                 <div className="w-full h-px mb-8 relative z-30"
                   style={{ background: `hsla(${themeHue}, 60%, 65%, 0.2)` }} />
                 
-                <div className="flex flex-wrap gap-3 relative z-30">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 relative z-30">
                   {activeNode.items.map((point, idx) => (
                     <div 
                       key={idx} 
