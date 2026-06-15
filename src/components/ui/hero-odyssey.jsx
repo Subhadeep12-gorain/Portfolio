@@ -79,11 +79,14 @@ const Lightning = ({ hue = 230, xOffset = 0, speed = 1, intensity = 1, size = 1 
       float ns(vec2 p){vec2 i=floor(p),f=fract(p);float a=h12(i),b=h12(i+vec2(1,0)),c=h12(i+vec2(0,1)),d=h12(i+1.);vec2 t=smoothstep(0.,1.,f);return mix(mix(a,b,t.x),mix(c,d,t.x),t.y);}
       float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<N;++i){v+=a*ns(p);p*=r2d(.45);p*=2.;a*=.5;}return v;}
       void main(){
-        vec2 uv=gl_FragCoord.xy/iResolution.xy;uv=2.*uv-1.;uv.x*=iResolution.x/iResolution.y;uv.x+=uXOffset;
+        vec2 uv=gl_FragCoord.xy/iResolution.xy;uv=2.*uv-1.;
+        float aspect = iResolution.x/iResolution.y;
+        uv.x *= aspect; uv.x += uXOffset;
         
         // Anchor at the top: displacement becomes 0 at uv.y = 1.0
         float disp = 2.*fbm(uv*uSize+.8*iTime*uSpeed)-1.;
-        float anchor = (1.0 - uv.y) * 0.7; // 0 at top, increasing downwards
+        // Scale displacement by aspect so it wanders proportionally to the screen width!
+        float anchor = (1.0 - uv.y) * 0.35 * aspect;
         uv.x += disp * anchor;
         
         float d=abs(uv.x);
