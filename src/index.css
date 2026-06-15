@@ -1,0 +1,653 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Shippori+Mincho:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* === Colors (Sakura Nocturne palette) === */
+  --color-on-secondary: #283501;
+  --color-secondary-container: #3e4c16;
+  --color-on-primary-fixed-variant: #6b3743;
+  --color-surface: #111317;
+  --color-secondary: #bdce89;
+  --color-on-primary: #50212d;
+  --color-on-error: #690005;
+  --color-surface-container-high: #282a2e;
+  --color-on-error-container: #ffdad6;
+  --color-on-tertiary: #4d2600;
+  --color-on-secondary-container: #acbc7a;
+  --color-inverse-on-surface: #2f3035;
+  --color-outline: #9e8c8f;
+  --color-on-primary-container: #7b4551;
+  --color-on-surface: #e2e2e8;
+  --color-on-background: #e2e2e8;
+  --color-on-secondary-fixed: #161f00;
+  --color-surface-container-highest: #333539;
+  --color-tertiary-fixed-dim: #ffb77d;
+  --color-inverse-surface: #e2e2e8;
+  --color-on-tertiary-fixed: #2f1500;
+  --color-primary-fixed: #ffd9df;
+  --color-surface-tint: #fbb3c1;
+  --color-on-tertiary-fixed-variant: #6e3900;
+  --color-outline-variant: #514345;
+  --color-primary-fixed-dim: #fbb3c1;
+  --color-on-surface-variant: #d6c2c4;
+  --color-tertiary-fixed: #ffdcc3;
+  --color-primary: #ffdee3;
+  --color-surface-dim: #111317;
+  --color-secondary-fixed: #d9eaa3;
+  --color-surface-bright: #37393e;
+  --color-inverse-primary: #864e5a;
+  --color-primary-container: #ffb7c5;
+  --color-surface-variant: #333539;
+  --color-tertiary: #ffe0cb;
+  --color-error-container: #93000a;
+  --color-secondary-fixed-dim: #bdce89;
+  --color-tertiary-container: #ffbc87;
+  --color-surface-container-lowest: #0c0e12;
+  --color-on-tertiary-container: #824500;
+  --color-on-secondary-fixed-variant: #3e4c16;
+  --color-surface-container-low: #1a1c20;
+  --color-on-primary-fixed: #360c19;
+  --color-error: #ffb4ab;
+  --color-background: #111317;
+  --color-surface-container: #1e2024;
+
+  /* === Spacing === */
+  --spacing-margin-mobile: 24px;
+  --spacing-section-gap: 160px;
+  --spacing-container-max: 1440px;
+  --spacing-margin-desktop: 80px;
+  --spacing-gutter: 32px;
+  --spacing-unit: 8px;
+
+  /* === Font Families === */
+  --font-body-md: "Space Grotesk", sans-serif;
+  --font-headline-lg-mobile: "Shippori Mincho", serif;
+  --font-headline-lg: "Shippori Mincho", serif;
+  --font-label-sm: "Space Grotesk", sans-serif;
+  --font-headline-md: "Shippori Mincho", serif;
+  --font-body-lg: "Space Grotesk", sans-serif;
+  --font-display-lg: "Shippori Mincho", serif;
+  --font-tech-mono: "JetBrains Mono", monospace;
+
+  /* === Font Sizes === */
+  --text-body-md: 16px;
+  --text-body-md--line-height: 1.6;
+  --text-body-md--font-weight: 400;
+
+  --text-headline-lg-mobile: 32px;
+  --text-headline-lg-mobile--line-height: 1.2;
+  --text-headline-lg-mobile--font-weight: 500;
+
+  --text-headline-lg: 48px;
+  --text-headline-lg--line-height: 1.2;
+  --text-headline-lg--font-weight: 500;
+
+  --text-label-sm: 12px;
+  --text-label-sm--line-height: 1.0;
+  --text-label-sm--letter-spacing: 0.1em;
+  --text-label-sm--font-weight: 600;
+
+  --text-headline-md: 32px;
+  --text-headline-md--line-height: 1.3;
+  --text-headline-md--font-weight: 400;
+
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 1.6;
+  --text-body-lg--letter-spacing: 0.01em;
+  --text-body-lg--font-weight: 400;
+
+  --text-display-lg: 80px;
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 500;
+}
+
+/* === Base Styles === */
+body {
+  background-color: #111317;
+  color: #e2e2e8;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  cursor: none;
+}
+
+/* Restore caret on text inputs — custom cursor stays visible beside */
+input, textarea, select {
+  cursor: text;
+}
+
+/* Glassmorphism Navigation */
+.nav-glass {
+  background: rgba(22, 27, 34, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Ambient Glow Effect */
+.bloom-glow {
+  box-shadow: 0 0 40px rgba(255, 183, 197, 0.1);
+}
+
+.py-section-gap {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+@media (min-width: 768px) {
+  .py-section-gap {
+    padding-top: 120px;
+    padding-bottom: 120px;
+  }
+}
+
+.bloom-glow-hover:hover {
+  box-shadow: 0 0 30px rgba(255, 183, 197, 0.2);
+  transition: box-shadow 0.5s ease-in-out;
+}
+
+/* Cinematic Fade In */
+.fade-in-slow {
+  animation: fadeInSlow 4s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInSlow {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Parallax Background */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111317;
+}
+::-webkit-scrollbar-thumb {
+  background: #333539;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9e8c8f;
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Soft Aura Glow Animation */
+@keyframes soft-aura-pulse {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scaleY(0.95);
+  }
+  5% {
+    opacity: 0.85;
+    transform: scaleY(1.06);
+  }
+  8% {
+    opacity: 0.35;
+    transform: scaleY(0.97);
+  }
+  12% {
+    opacity: 0.75;
+    transform: scaleY(1.03);
+  }
+  15% {
+    opacity: 0.25;
+    transform: scaleY(0.95);
+  }
+  42% {
+    opacity: 0.25;
+    transform: scaleY(0.95);
+  }
+  45% {
+    opacity: 0.9;
+    transform: scaleY(1.08);
+  }
+  48% {
+    opacity: 0.3;
+    transform: scaleY(0.96);
+  }
+  52% {
+    opacity: 0.8;
+    transform: scaleY(1.04);
+  }
+  55% {
+    opacity: 0.25;
+    transform: scaleY(0.95);
+  }
+  82% {
+    opacity: 0.25;
+    transform: scaleY(0.95);
+  }
+  85% {
+    opacity: 0.95;
+    transform: scaleY(1.1);
+  }
+  88% {
+    opacity: 0.35;
+    transform: scaleY(0.98);
+  }
+  92% {
+    opacity: 0.85;
+    transform: scaleY(1.05);
+  }
+  95% {
+    opacity: 0.25;
+    transform: scaleY(0.95);
+  }
+}
+
+.soft-aura {
+  animation: soft-aura-pulse 5.5s infinite;
+  transform-origin: top center;
+}
+
+/* Mastery Shimmer Sweep + Persistent Glow */
+@keyframes shimmer-sweep {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.mastery-shimmer {
+  transition: color 0.8s ease-out, text-shadow 0.8s ease-out, opacity 0.8s ease-out;
+}
+
+.mastery-shimmer-active {
+  background-image: linear-gradient(
+    90deg,
+    currentColor 0%,
+    currentColor 35%,
+    rgba(255, 222, 227, 0.95) 50%,
+    currentColor 65%,
+    currentColor 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-sweep 1.2s ease-in-out forwards;
+}
+
+/* Settle state overrides: solid rose color, persistent strong pink glow, full visibility */
+.mastery-shimmer-settled {
+  color: rgba(251, 179, 193, 0.95) !important;
+  -webkit-text-fill-color: rgba(251, 179, 193, 0.95) !important;
+  background-image: none !important;
+  opacity: 1.0 !important;
+  text-shadow: 0 0 30px rgba(251, 179, 193, 0.5), 0 0 60px rgba(251, 179, 193, 0.2) !important;
+}
+
+/* Continuous Ken Burns continuous zoom */
+@keyframes ken-burns-zoom {
+  0% {
+    transform: scale(1.0);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
+
+.ken-burns-zoom {
+  animation: ken-burns-zoom 8s ease-in-out infinite alternate;
+}
+
+/* Sakura-pink Vignette Border Glow */
+.sakura-vignette {
+  position: relative;
+}
+
+.sakura-vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 35px rgba(251, 179, 193, 0.22);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 2;
+}
+
+/* Button Glow Underline */
+.btn-glow-underline {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.btn-glow-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 222, 227, 0.3); /* primary/30 */
+  box-shadow: 0 0 0px transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-glow-underline:hover {
+  color: #ffffff;
+}
+
+.btn-glow-underline:hover::after {
+  background-color: rgba(255, 222, 227, 1); /* full primary */
+  box-shadow: 0 0 8px rgba(255, 222, 227, 0.8), 0 0 15px rgba(255, 222, 227, 0.4);
+}
+
+/* GitHub Bento Card Border Tracer */
+@keyframes border-trace {
+  0% {
+    stroke-dashoffset: 400;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.border-trace-rect {
+  fill: none;
+  stroke: rgba(251, 179, 193, 0.65);
+  stroke-width: 1.5px;
+  stroke-dasharray: 100 300;
+  stroke-dashoffset: 400;
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.group:hover .border-trace-rect {
+  animation: border-trace 2.5s linear infinite;
+}
+
+/* Live Status Indicator Pulse */
+@keyframes status-pulse {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(251, 179, 193, 0.7);
+  }
+  50% {
+    opacity: 0.3;
+    box-shadow: 0 0 12px 4px rgba(251, 179, 193, 0.2);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(251, 179, 193, 0.7);
+  }
+}
+
+.status-pulse-dot {
+  animation: status-pulse 2s infinite ease-in-out;
+  background-color: rgb(251, 179, 193);
+}
+
+/* Projector Film Grain Flicker */
+@keyframes grain-flicker {
+  0%, 100% { opacity: 0.022; }
+  50% { opacity: 0.038; }
+}
+
+.film-grain-active {
+  animation: grain-flicker 0.15s steps(2) infinite;
+}
+
+/* Neural Grid Drift */
+@keyframes neural-drift {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-60px);
+  }
+}
+
+.neural-grid-animate {
+  animation: neural-drift 20s linear infinite;
+  animation-play-state: paused;
+  transition: opacity 0.5s ease;
+}
+
+#about:hover .neural-grid-animate {
+  animation-play-state: running;
+}
+
+/* Glass Card Rotating/Shifting Radial Glow */
+@keyframes glow-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.shifting-card-glow {
+  background-image: radial-gradient(circle at center, rgba(251, 179, 193, 0.055) 0%, transparent 65%);
+  background-size: 200% 200%;
+  animation: glow-shift 8s ease infinite alternate;
+}
+
+/* Terminal Blinking Cursor */
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 6px;
+  height: 12px;
+  background-color: rgba(214, 194, 196, 0.4);
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: blink-cursor 0.8s step-end infinite;
+}
+
+/* CPU Circuit Flow Animations */
+.cpu-architecture {
+  offset-rotate: auto;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes cpu-flow {
+  0% {
+    offset-distance: 0%;
+  }
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.cpu-line-1 {
+  offset-path: path("M 10 20 h 79.5 q 5 0 5 5 v 24");
+  animation: cpu-flow 3.5s infinite linear;
+}
+.cpu-line-2 {
+  offset-path: path("M 180 10 h -69.7 q -5 0 -5 5 v 24");
+  animation: cpu-flow 4.2s infinite linear;
+}
+.cpu-line-3 {
+  offset-path: path("M 130 20 v 21.8 q 0 5 -5 5 h -10");
+  animation: cpu-flow 2.8s infinite linear;
+}
+.cpu-line-4 {
+  offset-path: path("M 170 80 v -21.8 q 0 -5 -5 -5 h -50");
+  animation: cpu-flow 4.8s infinite linear;
+}
+.cpu-line-5 {
+  offset-path: path("M 135 65 h 15 q 5 0 5 5 v 10 q 0 5 -5 5 h -39.8 q -5 0 -5 -5 v -20");
+  animation: cpu-flow 5.2s infinite linear;
+}
+.cpu-line-6 {
+  offset-path: path("M 94.8 95 v -36");
+  animation: cpu-flow 2.2s infinite linear;
+}
+.cpu-line-7 {
+  offset-path: path("M 88 88 v -15 q 0 -5 -5 -5 h -10 q -5 0 -5 -5 v -5 q 0 -5 5 -5 h 14");
+  animation: cpu-flow 4.5s infinite linear;
+}
+.cpu-line-8 {
+  offset-path: path("M 30 30 h 25 q 5 0 5 5 v 6.5 q 0 5 5 5 h 20");
+  animation: cpu-flow 3.8s infinite linear;
+}
+
+/* Contact Section Bokeh Pulse */
+@keyframes bokeh-pulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.3; }
+}
+
+/* ─── Bento Card 2: Phone App scroll ─── */
+@keyframes phone-scroll {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+.phone-menu-scroll {
+  animation: phone-scroll 4s linear infinite;
+}
+
+/* Shimmer sweep per row */
+@keyframes phone-shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+.phone-shimmer-row {
+  animation: phone-shimmer 2.5s ease-in-out infinite;
+}
