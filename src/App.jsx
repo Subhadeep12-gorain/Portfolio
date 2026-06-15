@@ -681,7 +681,7 @@ function App() {
                 whileInView={{ opacity: 1, x: 0, filter: "blur(0px)", scale: 1 }}
                 viewport={{ once: false, margin: "-60px" }}
                 transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-                className="font-headline-lg text-[2.2rem] md:text-[3.5rem] text-white font-normal relative z-10 text-center"
+                className="font-headline-lg text-[1.8rem] md:text-[2.6rem] text-white font-light tracking-wide relative z-10 text-center"
               >
                 <SplitHeading>{t('projects.title')}</SplitHeading>
               </motion.h3>

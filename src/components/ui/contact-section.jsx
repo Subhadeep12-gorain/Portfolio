@@ -138,7 +138,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
           </motion.span>
 
           {/* Main Heading (Staggered Lines) */}
-          <h3 className="font-serif text-[2.2rem] md:text-[3.5rem] text-white font-normal tracking-wide mb-6 leading-tight">
+          <h3 className="font-serif text-[1.8rem] md:text-[2.6rem] text-white font-light tracking-[0.05em] mb-6 leading-tight">
             <motion.span
               variants={{
                 hidden: { opacity: 0, x: -40 },

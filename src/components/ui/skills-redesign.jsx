@@ -153,7 +153,7 @@ export default function SkillsRedesign({ themeHue = 220 }) {
           whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
           viewport={{ once: false, margin: "-60px" }}
           transition={{ type: "spring", stiffness: 70, damping: 18, delay: 0.15 }}
-          className="font-serif text-[2.2rem] md:text-[2.8rem] text-white font-normal tracking-wide whitespace-nowrap"
+          className="font-serif text-[1.8rem] md:text-[2.4rem] text-white font-light tracking-[0.05em] whitespace-nowrap"
           style={{ textShadow: `0 0 20px hsla(${themeHue}, 70%, 65%, 0.28)`, perspective: "1000px" }}
         >
           <SplitHeading>{t('skills.title')}</SplitHeading>
@@ -347,7 +347,7 @@ export default function SkillsRedesign({ themeHue = 220 }) {
                     }}>
                     <ActiveIcon size={24} />
                   </div>
-                  <h4 className="text-2xl md:text-4xl font-serif text-white font-bold tracking-wide leading-tight break-words max-w-full" style={{ fontFamily: "'EB Garamond', serif" }}>
+                  <h4 className="text-xl md:text-2xl font-serif text-white font-light tracking-[0.05em] leading-tight break-words max-w-full" style={{ fontFamily: "'EB Garamond', serif" }}>
                     {activeNode.title}
                   </h4>
                 </div>
