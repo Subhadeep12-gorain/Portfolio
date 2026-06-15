@@ -83,10 +83,16 @@ const Lightning = ({ hue = 230, xOffset = 0, speed = 1, intensity = 1, size = 1 
         float aspect = iResolution.x/iResolution.y;
         uv.x *= aspect; uv.x += uXOffset;
         
+        vec2 noiseUV = uv;
+        // Make the lightning zig-zag more frequently on tall mobile screens
+        if (aspect < 1.0) {
+            noiseUV.y *= 2.0 / aspect;
+        }
+        
         // Anchor at the top: displacement becomes 0 at uv.y = 1.0
-        float disp = 2.*fbm(uv*uSize+.8*iTime*uSpeed)-1.;
-        // Scale displacement by aspect so it wanders proportionally to the screen width!
-        float anchor = (1.0 - uv.y) * 0.35 * aspect;
+        float disp = 2.*fbm(noiseUV*uSize+.8*iTime*uSpeed)-1.;
+        // Give it a much wider swing area (0.55) so it strikes dynamically across the globe
+        float anchor = (1.0 - uv.y) * 0.55 * aspect;
         uv.x += disp * anchor;
         
         float d=abs(uv.x);
