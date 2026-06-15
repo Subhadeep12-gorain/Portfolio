@@ -5,6 +5,7 @@ import { Brain, Database, BarChart, Server, Code, Network } from "lucide-react";
 import { CpuArchitecture } from "./cpu-architecture";
 import { SplitHeading } from "./split-heading";
 import { useTranslation } from 'react-i18next';
+import { FloatingSkillOrbs } from "./floating-skill-orbs";
 
 // skillsData moved inside component
 export default function SkillsRedesign({ themeHue = 220 }) {
@@ -113,7 +114,7 @@ export default function SkillsRedesign({ themeHue = 220 }) {
 
   const calculateNodePosition = (index, total) => {
     const angle = ((index / total) * 360) % 360;
-    const radius = 180; // 360px diameter circle
+    const radius = typeof window !== 'undefined' && window.innerWidth < 768 ? 110 : 180; // smaller on mobile
     const radian = (angle * Math.PI) / 180;
 
     const x = radius * Math.cos(radian);
@@ -128,7 +129,7 @@ export default function SkillsRedesign({ themeHue = 220 }) {
   return (
     <div 
       ref={containerRef}
-      className="w-full min-h-screen flex flex-col items-center justify-center relative overflow-hidden select-none py-20"
+      className="w-full md:min-h-screen flex flex-col items-center md:justify-center relative overflow-hidden select-none md:py-20 pt-6 pb-20"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -162,10 +163,21 @@ export default function SkillsRedesign({ themeHue = 220 }) {
       {/* PANELS WRAPPER */}
       <div className="w-full max-w-[1200px] flex flex-col md:flex-row items-center justify-between z-10">
         
-        {/* LEFT PANEL: Orbital Component */}
+        {/* LEFT PANEL: Orbital Component (Desktop) & Floating Orbs (Mobile) */}
         <div className="w-full md:w-[50%] relative flex flex-col items-center justify-center md:items-start md:pl-8 lg:pl-16">
-          {/* Orbital container (no extra top margin needed now) */}
-          <div className="relative w-full max-w-[450px] min-h-[450px] flex items-center justify-center">
+          
+          {/* MOBILE ONLY: Floating Orbs */}
+          <div className="w-full flex md:hidden items-center justify-center">
+            <FloatingSkillOrbs 
+              skillsData={skillsData} 
+              activeNodeId={activeNodeId} 
+              setActiveNodeId={setActiveNodeId} 
+              themeHue={themeHue} 
+            />
+          </div>
+
+          {/* DESKTOP ONLY: Orbital container */}
+          <div className="hidden md:flex relative w-full max-w-[450px] min-h-[450px] items-center justify-center">
           
           {/* Curved Visual Bridge Line — themeHue */}
           <div className="absolute top-1/2 left-[50%] w-[45vw] h-[300px] hidden md:block pointer-events-none z-0 -translate-y-[150px]">
@@ -215,7 +227,7 @@ export default function SkillsRedesign({ themeHue = 220 }) {
               </div>
 
             {/* Orbit line ring path */}
-            <div className="absolute w-[360px] h-[360px] rounded-full border border-white/[0.04] pointer-events-none z-0" />
+            <div className="absolute w-[220px] h-[220px] md:w-[360px] md:h-[360px] rounded-full border border-white/[0.04] pointer-events-none z-0" />
 
             {/* Node items */}
             {skillsData.map((item, index) => {

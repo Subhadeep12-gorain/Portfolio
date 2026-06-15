@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 import { useTranslation } from 'react-i18next';
 
 // ═══════════════════════════════════════════════════════════════
@@ -308,135 +308,134 @@ function DesktopTimeline({ show, fast, pins, themeHue = 220, items }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// Mobile — vertical winding path
+// Mobile — Accordion Stepper
 // ═══════════════════════════════════════════════════════════════
-const MOB_PATH =
-  "M 50 0 C 15 60 85 100 50 150 C 15 200 85 260 50 310 " +
-  "C 15 360 85 420 50 470 C 15 520 85 570 50 620 " +
-  "C 15 670 85 720 50 770 C 30 810 60 830 50 860";
-
 function MobileTimeline({ show, fast, pins, themeHue = 220, items }) {
-  const base = fast ? 0 : 0.2;
-  const step = fast ? 0 : 0.18;
+  const [expandedIndex, setExpandedIndex] = useState(0); // Open first item by default
+
+  const toggleExpand = (index) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
+  };
 
   return (
-    <div className="md:hidden relative max-w-sm mx-auto px-2">
-      {/* Winding vertical path background */}
-      <svg
-        className="absolute left-1/2 -translate-x-1/2 top-0 h-full"
-        viewBox="0 0 100 860"
-        preserveAspectRatio="none"
-        fill="none"
-        style={{ width: "75%" }}
-      >
-        <motion.path
-          d={MOB_PATH}
-          stroke="rgba(255,255,255,0.10)"
-          strokeWidth={5}
-          strokeLinecap="round"
-          initial={{ pathLength: 0 }}
-          animate={show ? { pathLength: 1 } : { pathLength: 0 }}
-          transition={{ duration: fast ? 0 : 1.2, ease: "easeInOut" }}
-        />
+    <div className="md:hidden w-full max-w-md mx-auto px-4 py-6">
+      <div className="relative space-y-8 pb-4">
+        {/* Background vertical line */}
+        <div className="absolute top-2 bottom-0 left-[9.5px] w-[1px] bg-white/15 z-0" />
 
-        {/* ── Looping moving dot on the timeline ── */}
-        {show && (
-          <circle r="4" fill="white" style={{ filter: `drop-shadow(0 0 6px hsl(${themeHue}, 80%, 75%))` }}>
-            <animateMotion 
-              dur="8s" 
-              repeatCount="indefinite" 
-              path={MOB_PATH} 
-            />
-          </circle>
+        {/* Traveling glowing dot animation */}
+        {show && !fast && (
+          <motion.div
+            className="absolute left-[9.5px] w-[2px] h-[60px] z-0 -translate-x-[0.5px]"
+            style={{
+              background: `linear-gradient(to bottom, transparent, hsl(${themeHue}, 80%, 65%), transparent)`,
+              boxShadow: `0 0 10px hsl(${themeHue}, 80%, 60%)`,
+            }}
+            animate={{ top: ["0%", "100%"] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+          />
         )}
-      </svg>
 
-      {/* Cards */}
-      <div className="relative z-10 space-y-7 py-4">
         {items.map((item, i) => {
-          const pin    = pins[i];
-          const isLeft = i % 2 === 0;
-          const delay  = base + i * step;
+          const pin = pins[i];
+          const isExpanded = expandedIndex === i;
+          const delay = fast ? 0 : i * 0.15;
 
           return (
             <motion.div
               key={i}
-              className={`flex items-start gap-3
-                ${isLeft ? "flex-row" : "flex-row-reverse"}`}
-              initial={{ opacity: 0, y: 18 }}
-              animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-              transition={{ duration: 0.5, delay }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.6, delay, type: "spring", stiffness: 80 }}
+              className="relative pl-10"
             >
-              {/* Pin marker */}
-              <motion.div
-                className="flex-shrink-0 mt-1"
-                initial={{ scale: 0 }}
-                animate={show
-                  ? { scale: [0, 1.2, 0.95, 1] }
-                  : { scale: 0 }}
-                transition={{
-                  duration: fast ? 0 : 0.55,
-                  delay,
-                  times: [0, 0.45, 0.72, 1],
+              {/* Stepper Node */}
+              <motion.div 
+                className="absolute left-0 top-1.5 w-5 h-5 rounded-full flex items-center justify-center border-2 transition-colors duration-300 z-10"
+                style={{ 
+                  backgroundColor: '#0a0a0a', // Solid background so line doesn't show through
+                  borderColor: pin.color,
+                  boxShadow: isExpanded ? `0 0 12px ${pin.color}40` : 'none'
                 }}
+                initial={{ scale: 0 }}
+                animate={show ? { scale: 1 } : { scale: 0 }}
+                transition={{ duration: 0.4, delay: delay + 0.2, type: "spring" }}
               >
-                <svg width="38" height="54" viewBox="-19 -48 38 54">
-                  <defs>
-                    <linearGradient id={`mHL${i}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%"  stopColor="rgba(255,255,255,0.3)" />
-                      <stop offset="55%" stopColor="rgba(255,255,255,0)" />
-                    </linearGradient>
-                  </defs>
-                  <ellipse cx={0} cy={3} rx={6} ry={2.5}
-                    fill="rgba(0,0,0,0.2)" />
-                  <path d={pinPath(16)} fill={pin.color} />
-                  <path d={pinPath(16)} fill={`url(#mHL${i})`} opacity={0.4} />
-                  <text
-                    x={0} y={-24.8}
-                    textAnchor="middle" dominantBaseline="central"
-                    fill="white" fontSize="8.5" fontWeight="700"
-                    style={{ fontFamily: "'Geist', sans-serif" }}
-                  >
-                    {item.year}
-                  </text>
-                </svg>
+                <div 
+                  className="w-2 h-2 rounded-full transition-all duration-300"
+                  style={{ 
+                    backgroundColor: pin.color,
+                    transform: isExpanded ? 'scale(1)' : 'scale(0.5)',
+                    opacity: isExpanded ? 1 : 0.7
+                  }}
+                />
               </motion.div>
 
-              {/* Content */}
-              <div className={`flex-1 min-w-0
-                ${isLeft ? "text-left" : "text-right"}`}>
-                {/* Tag */}
-                <span
-                  className="inline-block px-1.5 py-0.5 mb-1 rounded
-                             text-[8px] font-mono tracking-wider uppercase border"
-                  style={{
-                    color: pin.color,
-                    borderColor: `${pin.color}33`,
-                    backgroundColor: `${pin.color}0D`,
-                  }}
-                >
-                  {item.tag}
-                </span>
-
-                <h4
-                  className="text-white font-serif text-[0.95rem] tracking-wide
-                             leading-snug"
-                  style={{ fontFamily: "'EB Garamond', serif" }}
+              {/* Header (Clickable) */}
+              <div 
+                onClick={() => toggleExpand(i)}
+                className="cursor-pointer group flex flex-col items-start select-none"
+              >
+                <div className="flex items-center gap-3 mb-1.5 w-full justify-between">
+                   <div className="flex items-center gap-2">
+                     <span 
+                       className="text-xs font-mono tracking-wider font-semibold"
+                       style={{ color: pin.color }}
+                     >
+                       {item.year}
+                     </span>
+                     <span 
+                       className="px-1.5 py-0.5 rounded text-[8px] font-mono tracking-wider uppercase border"
+                       style={{
+                         color: pin.color,
+                         borderColor: `${pin.color}33`,
+                         backgroundColor: `${pin.color}0D`,
+                       }}
+                     >
+                       {item.tag}
+                     </span>
+                   </div>
+                   {/* Chevron */}
+                   <motion.div
+                     animate={{ rotate: isExpanded ? 180 : 0 }}
+                     transition={{ duration: 0.3 }}
+                     className="text-white/40 group-hover:text-white/80"
+                   >
+                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                       <polyline points="6 9 12 15 18 9"></polyline>
+                     </svg>
+                   </motion.div>
+                </div>
+                
+                <h4 
+                  className="font-serif text-[1.1rem] tracking-wide leading-tight transition-colors duration-300 group-hover:text-white/90 text-left"
+                  style={{ fontFamily: "'EB Garamond', serif", color: isExpanded ? 'white' : 'rgba(255,255,255,0.75)' }}
                 >
                   {item.title}
                 </h4>
-
-                <span
-                  className="text-[#d6c2c4]/40 text-[10px] font-mono
-                             tracking-wider"
-                >
-                  {item.org}
-                </span>
-
-                <p className="text-white/40 text-xs leading-snug mt-0.5">
-                  {item.desc}
-                </p>
               </div>
+
+              {/* Expandable Content */}
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-3 pb-2 space-y-2">
+                      <div className="text-[#d6c2c4]/60 text-[10px] font-mono tracking-wider uppercase">
+                        {item.org}
+                      </div>
+                      <p className="text-white/50 text-[0.85rem] leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           );
         })}
@@ -456,18 +455,25 @@ export default function ExperienceTimeline({ themeHue = 220 }) {
 
   const journeyItems = [
     {
-      year: t('experience.year_26'),
-      title: t('experience.mentor_title'),
-      org: t('experience.mentor_org'),
-      desc: t('experience.mentor_desc'),
-      tag: t('experience.tag_leadership'),
+      year: t('experience.year_22'),
+      title: t('experience.edu_title'),
+      org: t('experience.edu_org'),
+      desc: t('experience.edu_desc'),
+      tag: t('experience.tag_education'),
+    },
+    {
+      year: t('experience.year_24'),
+      title: t('experience.sih_title'),
+      org: t('experience.sih_org'),
+      desc: t('experience.sih_desc'),
+      tag: t('experience.tag_competition'),
     },
     {
       year: t('experience.year_25'),
-      title: t('experience.jlpt_title'),
-      org: t('experience.jlpt_org'),
-      desc: t('experience.jlpt_desc'),
-      tag: t('experience.tag_languages'),
+      title: t('experience.intern_title'),
+      org: t('experience.intern_org'),
+      desc: t('experience.intern_desc'),
+      tag: t('experience.tag_engineering'),
     },
     {
       year: t('experience.year_25'),
@@ -478,24 +484,17 @@ export default function ExperienceTimeline({ themeHue = 220 }) {
     },
     {
       year: t('experience.year_25'),
-      title: t('experience.intern_title'),
-      org: t('experience.intern_org'),
-      desc: t('experience.intern_desc'),
-      tag: t('experience.tag_engineering'),
+      title: t('experience.jlpt_title'),
+      org: t('experience.jlpt_org'),
+      desc: t('experience.jlpt_desc'),
+      tag: t('experience.tag_languages'),
     },
     {
-      year: t('experience.year_24'),
-      title: t('experience.sih_title'),
-      org: t('experience.sih_org'),
-      desc: t('experience.sih_desc'),
-      tag: t('experience.tag_competition'),
-    },
-    {
-      year: t('experience.year_22'),
-      title: t('experience.edu_title'),
-      org: t('experience.edu_org'),
-      desc: t('experience.edu_desc'),
-      tag: t('experience.tag_education'),
+      year: t('experience.year_26'),
+      title: t('experience.mentor_title'),
+      org: t('experience.mentor_org'),
+      desc: t('experience.mentor_desc'),
+      tag: t('experience.tag_leadership'),
     },
   ];
 

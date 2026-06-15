@@ -49,7 +49,7 @@ const bentoHover = {
   boxShadow: '0 0 40px rgba(251,179,193,0.28), 0 0 80px rgba(251,179,193,0.1)',
 };
 
-const MagneticCVCard = ({ children, className = "", themeHue, delay, style = {} }) => {
+const MagneticCVCard = ({ children, className = "", themeHue, delay, style = {}, initialX = -30 }) => {
   const cardRef = useRef(null);
   const mouseX = useMotionValue(-1000);
   const mouseY = useMotionValue(-1000);
@@ -62,11 +62,14 @@ const MagneticCVCard = ({ children, className = "", themeHue, delay, style = {} 
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
+    const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
+    
+    mouseX.set(clientX - rect.left);
+    mouseY.set(clientY - rect.top);
 
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    const x = (clientX - rect.left) / rect.width - 0.5;
+    const y = (clientY - rect.top) / rect.height - 0.5;
     cardX.set(x);
     cardY.set(y);
   };
@@ -83,12 +86,16 @@ const MagneticCVCard = ({ children, className = "", themeHue, delay, style = {} 
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.5, ease: 'easeOut' }}
+      initial={{ opacity: 0, x: initialX }}
+      animate={{ opacity: 1, x: 0, transition: { delay, duration: 0.6, ease: 'easeOut' } }}
+      exit={{ opacity: 0, x: initialX, transition: { duration: 0.4, ease: 'easeIn' } }}
       whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleMouseMove}
+      onTouchMove={handleMouseMove}
+      onTouchEnd={handleMouseLeave}
       className={`relative overflow-hidden rounded-2xl backdrop-blur-xl p-6 cursor-pointer ${className}`}
       style={{ 
         border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)`, 
@@ -135,6 +142,42 @@ const aboutItemVariants = {
 };
 
 
+const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, github = false }) => {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 block flex-shrink-0 bg-gradient-to-br from-surface-container to-surface"
+      style={{ width: '280px', height: '300px' }}
+    >
+      {github && (
+        <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
+          <rect x="0.75" y="0.75" width="calc(100% - 1.5px)" height="calc(100% - 1.5px)" rx="8" ry="8" className="border-trace-rect" />
+        </svg>
+      )}
+      {children}
+      <div className="absolute bottom-0 left-0 p-5 w-full z-10" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
+        {tags && (
+          <div className="flex flex-wrap gap-2 mb-2">
+            {tags.map(tag => (
+              <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
+                style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
+            ))}
+          </div>
+        )}
+        <h4 className="font-body-lg text-body-lg" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>{title}</h4>
+        {desc && <p className="font-body-md text-body-md text-on-surface-variant mt-1 text-xs leading-relaxed">{desc}</p>}
+        <div className="mt-2">
+          <span className="font-label-sm text-[10px] tracking-wider flex items-center gap-1" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>
+            {github ? t('projects.github_activity') : t('projects.view_project')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+};
+
 function App() {
   const { t, i18n } = useTranslation();
 
@@ -143,6 +186,7 @@ function App() {
   };
 
   const [introDone, setIntroDone] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [themeHue] = useState(() => {
     const APPROVED_HUES = [170, 195, 220, 250, 275, 25, 45];
     return APPROVED_HUES[Math.floor(Math.random() * APPROVED_HUES.length)];
@@ -166,7 +210,7 @@ function App() {
 
   const aboutRef = useRef(null);
   const technicalMasteryRef = useRef(null);
-  const isTechMasteryInView = useInView(technicalMasteryRef, { margin: "0px 0px -200px 0px" });
+  const isTechMasteryInView = useInView(technicalMasteryRef, { margin: "-10% 0px" });
 
   const techVideoRef = useRef(null);
   useEffect(() => {
@@ -181,7 +225,7 @@ function App() {
 
   // Bento section: replay animation every time, with random directions
   const bentoRef = useRef(null);
-  const isBentoInView = useInView(bentoRef, { once: false, margin: '-100px 0px' });
+  const isBentoInView = useInView(bentoRef, { once: false, margin: '-10% 0px' });
   const [hoveredBento, setHoveredBento] = useState(null);
   const [cardDirs, setCardDirs] = useState(() => [
     getRandomDir(), getRandomDir(), getRandomDir(), getRandomDir()
@@ -337,7 +381,7 @@ function App() {
 
   return (
     <ReactLenis root>
-      <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent">
+      <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-hidden w-full max-w-[100vw]">
       
       {/* ====== Global Background Weather ====== */}
       <GlobalWeatherManager />
@@ -391,42 +435,54 @@ function App() {
         </div>
       </motion.nav>
 
-      {/* ====== Side Navigation for Mobile (fades with landing page) ====== */}
+      {/* ====== Mobile Top Navigation (Expanding Pill) ====== */}
       <motion.nav
+        layout
         style={{
           opacity: introDone ? 1 : 0,
-          pointerEvents: introDone ? 'auto' : 'none',
-          willChange: "opacity"
+          pointerEvents: introDone ? 'auto' : 'none'
         }}
-        className="fixed left-0 top-0 h-screen w-16 flex flex-col items-center py-8 z-40 bg-surface/20 backdrop-blur-lg border-r border-white/5 md:hidden"
+        className="fixed top-4 left-1/2 -translate-x-1/2 flex items-center justify-between px-5 h-11 z-50 rounded-full bg-black/60 backdrop-blur-xl border border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.4)] md:hidden overflow-hidden"
       >
-        <div className="font-headline-md text-on-surface mb-12 transform -rotate-90 origin-center translate-y-8 tracking-wider">
-          Studio
-        </div>
-        <ul className="flex flex-col gap-8 flex-grow justify-center font-label-sm text-label-sm">
-          <li onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-on-surface-variant/50 hover:text-primary hover:scale-110 transition-transform ease-out duration-300 flex flex-col items-center cursor-pointer">
-            <span className="material-symbols-outlined mb-1">home</span>
-            <span className="sr-only">Home</span>
-          </li>
-          <li onClick={() => scrollToSection('projects')} className="text-on-surface-variant/50 hover:text-primary hover:scale-110 transition-transform ease-out duration-300 flex flex-col items-center cursor-pointer">
-            <span className="material-symbols-outlined mb-1">grid_view</span>
-            <span className="sr-only">Works</span>
-          </li>
-          <li onClick={() => scrollToSection('about')} className="text-on-surface-variant/50 hover:text-primary hover:scale-110 transition-transform ease-out duration-300 flex flex-col items-center cursor-pointer">
-            <span className="material-symbols-outlined mb-1">person</span>
-            <span className="sr-only">About</span>
-          </li>
-          <li onClick={() => scrollToSection('contact')} className="text-on-surface-variant/50 hover:text-primary hover:scale-110 transition-transform ease-out duration-300 flex flex-col items-center cursor-pointer">
-            <span className="material-symbols-outlined mb-1">share</span>
-            <span className="sr-only">Contact</span>
-          </li>
-        </ul>
-        <div className="mt-auto flex flex-col gap-6 items-center">
-          <div className="text-on-surface-variant/50 hover:text-primary transition-colors cursor-pointer">
-            <span className="material-symbols-outlined">security</span>
-          </div>
-          <img alt="Creative Director Portrait" className="w-8 h-8 rounded-full border border-white/10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAn5pBNZC_B24_B5rJtep2woie8l3hkJWz0Ne8HKfxEFrFHgUpWJxTOW4_hoXCXeWUx4u0Pq1lsjJytfMBnamoHuKsooLPmSFgeqQF6tgJZuKuVJyEmXfoxvPhvwFb43Ze_NXfp7o31HewXgUYZc3WCu4yQftz9DJFolNTBC-YyF0uZM6SkgwrkMuMWs-ILVfIRjlQ4X69xaE0jLkALuS7EeW9lmcRiGjQh7w9m95uc_GEPJSEw_-uqLSveK_YjXhZoBaxROHyjaM" />
-        </div>
+        <motion.div
+          layout="position"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="font-serif text-[11px] tracking-[0.2em] text-primary uppercase cursor-pointer flex-shrink-0 flex items-center gap-2"
+        >
+          <span>夜桜</span>
+          <motion.span 
+            animate={{ rotate: isMobileMenuOpen ? 180 : 0 }} 
+            className="text-[7px] text-white/40"
+          >
+            ▼
+          </motion.span>
+        </motion.div>
+
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.ul
+              initial={{ opacity: 0, width: 0, paddingLeft: 0, paddingRight: 0 }}
+              animate={{ opacity: 1, width: "auto", paddingLeft: 12, paddingRight: 12 }}
+              exit={{ opacity: 0, width: 0, paddingLeft: 0, paddingRight: 0 }}
+              className="flex items-center gap-3.5 font-label-sm text-[8px] uppercase tracking-[0.1em] text-on-surface-variant/85 whitespace-nowrap overflow-hidden"
+            >
+              <li onClick={() => { setIsMobileMenuOpen(false); scrollToSection('projects'); }} className="cursor-pointer hover:text-primary transition-colors">{t('nav.projects')}</li>
+              <li onClick={() => { setIsMobileMenuOpen(false); scrollToSection('about'); }} className="cursor-pointer hover:text-primary transition-colors">{t('nav.about')}</li>
+              <li onClick={() => { setIsMobileMenuOpen(false); scrollToSection('skills'); }} className="cursor-pointer hover:text-primary transition-colors">{t('nav.skills')}</li>
+              <li onClick={() => { setIsMobileMenuOpen(false); scrollToSection('contact'); }} className="cursor-pointer hover:text-primary transition-colors">{t('nav.contact', 'Contact')}</li>
+            </motion.ul>
+          )}
+        </AnimatePresence>
+
+        <motion.div 
+          layout="position"
+          onClick={toggleLanguage}
+          className="cursor-pointer text-[9px] flex items-center gap-1 hover:text-primary transition-colors border-l border-white/10 pl-3 ml-auto flex-shrink-0"
+        >
+          <span className={`transition-opacity duration-300 ${i18n.language === 'en' ? 'text-white' : 'text-white/40'}`}>EN</span>
+          <span className="text-white/20">/</span>
+          <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>日本語</span>
+        </motion.div>
       </motion.nav>
 
       {/* ====== SECTION 1: Hero ====== */}
@@ -435,7 +491,7 @@ function App() {
       </div>
 
       {/* ====== SECTION 2: Technical Mastery / Introduction ====== */}
-      <div id="mastery" data-snap-section ref={technicalMasteryRef} style={{ position: 'relative', backgroundColor: 'transparent', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <div id="mastery" data-snap-section ref={technicalMasteryRef} className="py-section-gap" style={{ position: 'relative', backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
         {/* Rain Streaks — capped at 0.15 per vision doc */}
         <motion.div
           style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}
@@ -452,7 +508,7 @@ function App() {
         {/* Subtle readability layer */}
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)', zIndex: 1, pointerEvents: 'none' }} />
 
-        <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-20" style={{ position: 'relative', zIndex: 10 }}>
+        <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4" style={{ position: 'relative', zIndex: 10 }}>
           {/* Introduction Section — 12-col grid */}
           <section className="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
 
@@ -513,14 +569,14 @@ function App() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
 
                       {/* Education Card */}
-                      <MagneticCVCard themeHue={themeHue} delay={0.1}>
+                      <MagneticCVCard themeHue={themeHue} delay={0.1} initialX={-40}>
                         <span className="block font-label-sm text-[0.65rem] tracking-[0.2em] mb-3 uppercase"
                           style={{ color: `hsla(${themeHue}, 70%, 65%, 0.55)` }}>{t('cv.education')}</span>
                         <span className="font-serif text-[1.2rem] text-white">{t('cv.degree')}</span>
                       </MagneticCVCard>
 
                       {/* Core Stack Card */}
-                      <MagneticCVCard themeHue={themeHue} delay={0.2}>
+                      <MagneticCVCard themeHue={themeHue} delay={0.2} initialX={40}>
                         <span className="block font-label-sm text-[0.65rem] tracking-[0.2em] mb-3 uppercase"
                           style={{ color: `hsla(${themeHue}, 70%, 65%, 0.55)` }}>{t('cv.coreStack')}</span>
                         <div className="flex flex-wrap gap-2">
@@ -538,7 +594,7 @@ function App() {
                       </MagneticCVCard>
 
                       {/* Key Projects Card */}
-                      <MagneticCVCard className="md:col-span-2" themeHue={themeHue} delay={0.3}>
+                      <MagneticCVCard className="md:col-span-2" themeHue={themeHue} delay={0.3} initialX={-40}>
                         <span className="block font-label-sm text-[0.65rem] tracking-[0.2em] mb-4 uppercase"
                           style={{ color: `hsla(${themeHue}, 70%, 65%, 0.55)` }}>{t('cv.keyProjects')}</span>
                         <div className="flex flex-col md:flex-row gap-6">
@@ -552,7 +608,7 @@ function App() {
                       </MagneticCVCard>
 
                       {/* Summary Card */}
-                      <MagneticCVCard className="md:col-span-2" themeHue={themeHue} delay={0.4} style={{ background: `linear-gradient(135deg, hsla(${themeHue}, 60%, 55%, 0.07), #0a0f19cc)` }}>
+                      <MagneticCVCard className="md:col-span-2" themeHue={themeHue} delay={0.4} initialX={40} style={{ background: `linear-gradient(135deg, hsla(${themeHue}, 60%, 55%, 0.07), #0a0f19cc)` }}>
                         <span className="font-serif italic text-[1.25rem] relative z-10 tracking-wide"
                           style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>
                           {t('cv.summary')}
@@ -631,11 +687,11 @@ function App() {
               </motion.h3>
             </div>
 
-            {/* Bento grid — ref-driven, replays on each entry with random directions */}
-            <div ref={bentoRef}>
+            {/* Desktop Bento grid */}
+            <div ref={bentoRef} className="hidden md:block">
               <Suspense fallback={null}>
                 <div
-                  className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[300px] relative z-10"
+                  className="grid grid-cols-4 gap-6 auto-rows-[300px] relative z-10"
                 >
               {/* ── Card 1: Japan Tourism Demand Forecasting ── */}
               <motion.a
@@ -656,7 +712,7 @@ function App() {
               >
                 {/* <JapanMapVisual isInView={true} /> */}
                 <JapanMapVisual isHovered={hoveredBento === 1} />
-                <div className="absolute bottom-0 left-0 p-8 w-full z-10 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.9) 0%, transparent 100%)' }}>
+                <div className="absolute bottom-0 left-0 p-8 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.9) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-3">
                     {['Python', 'Pandas', 'XGBoost', 'Time-Series'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
@@ -664,8 +720,8 @@ function App() {
                     ))}
                   </div>
                   <h4 className="font-headline-md text-headline-md" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>{t('projects.p1_title')}</h4>
-                  <p className="font-body-md text-body-md text-on-surface-variant mt-1 text-sm leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">{t('projects.p1_desc')}</p>
-                  <div className="mt-3 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                  <p className="font-body-md text-body-md text-on-surface-variant mt-1 text-sm leading-relaxed opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">{t('projects.p1_desc')}</p>
+                  <div className="mt-3 opacity-100 md:opacity-0 group-hover:opacity-100 transform translate-y-0 md:translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
                     <span className="font-label-sm text-xs tracking-wider flex items-center gap-1" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>
                       {t('projects.view_project')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </span>
@@ -692,7 +748,7 @@ function App() {
               >
                 {/* <PhoneAppVisual /> */}
                 <PhoneAppVisual isHovered={hoveredBento === 2} />
-                <div className="absolute bottom-0 left-0 p-6 w-full z-10 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
+                <div className="absolute bottom-0 left-0 p-6 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {['React Native', 'Expo', 'AsyncStorage'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
@@ -700,8 +756,8 @@ function App() {
                     ))}
                   </div>
                   <h4 className="font-body-lg text-body-lg" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>{t('projects.p3_title')}</h4>
-                  <p className="font-body-md text-body-md text-on-surface-variant mt-1 text-xs leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">{t('projects.p3_desc')}</p>
-                  <div className="mt-3 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                  <p className="font-body-md text-body-md text-on-surface-variant mt-1 text-xs leading-relaxed opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">{t('projects.p3_desc')}</p>
+                  <div className="mt-3 opacity-100 md:opacity-0 group-hover:opacity-100 transform translate-y-0 md:translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
                     <span className="font-label-sm text-xs tracking-wider flex items-center gap-1" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>
                       {t('projects.view_project')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </span>
@@ -728,7 +784,7 @@ function App() {
               >
                 {/* <EcommerceVisual /> */}
                 <EcommerceVisual isHovered={hoveredBento === 3} />
-                <div className="absolute bottom-0 left-0 p-6 w-full z-10 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
+                <div className="absolute bottom-0 left-0 p-6 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {['Django', 'React', 'PostgreSQL'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
@@ -736,7 +792,7 @@ function App() {
                     ))}
                   </div>
                   <h4 className="font-body-lg text-body-lg" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>{t('projects.p2_title')}</h4>
-                  <div className="mt-2 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                  <div className="mt-2 opacity-100 md:opacity-0 group-hover:opacity-100 transform translate-y-0 md:translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
                     <span className="font-label-sm text-xs tracking-wider flex items-center gap-1" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>
                       {t('projects.view_project')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </span>
@@ -765,7 +821,7 @@ function App() {
                 <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
                   <rect x="0.75" y="0.75" width="calc(100% - 1.5px)" height="calc(100% - 1.5px)" rx="8" ry="8" className="border-trace-rect" />
                 </svg>
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                <div className="absolute inset-0 opacity-10 md:opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{ background: `radial-gradient(circle at center, hsla(${themeHue}, 70%, 65%, 0.07) 0%, transparent 60%)` }} />
                 <GitHubHeatmapVisual />
                 <div className="absolute bottom-0 left-0 p-5 w-full z-10">
@@ -774,6 +830,35 @@ function App() {
                 </div>
               </motion.a>
                 </div>
+              </Suspense>
+            </div>
+
+            {/* Mobile Looping Marquee */}
+            <div className="block md:hidden relative z-10 mt-4 w-full overflow-hidden" style={{ height: '300px' }}>
+              <Suspense fallback={null}>
+                <motion.div
+                  className="flex gap-4"
+                  animate={{ x: ["0%", "-50%"] }}
+                  transition={{ ease: "linear", duration: 25, repeat: Infinity }}
+                  style={{ width: "max-content" }}
+                >
+                  {[...Array(2)].map((_, i) => (
+                    <div key={i} className="flex gap-4">
+                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain/japan-tourism-forecasting" tags={['Python', 'Pandas', 'XGBoost', 'Time-Series']} title={t('projects.p1_title')} desc={t('projects.p1_desc')} themeHue={themeHue} t={t}>
+                        <JapanMapVisual isHovered={true} />
+                      </MobileProjectCard>
+                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain/NoteApp" tags={['React Native', 'Expo', 'AsyncStorage']} title={t('projects.p3_title')} desc={t('projects.p3_desc')} themeHue={themeHue} t={t}>
+                        <PhoneAppVisual isHovered={true} />
+                      </MobileProjectCard>
+                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain/Ecommerce-website-" tags={['Django', 'React', 'PostgreSQL']} title={t('projects.p2_title')} themeHue={themeHue} t={t}>
+                        <EcommerceVisual isHovered={true} />
+                      </MobileProjectCard>
+                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain" title={t('projects.view_github')} desc={t('projects.github_activity')} themeHue={themeHue} t={t} github>
+                        <GitHubHeatmapVisual />
+                      </MobileProjectCard>
+                    </div>
+                  ))}
+                </motion.div>
               </Suspense>
             </div>
           </section>
@@ -791,28 +876,123 @@ function App() {
       </div>
 
       {/* ====== SECTION 4: About Me ====== */}
-      <div id="about-wrapper" data-snap-section style={{ position: 'relative', overflow: 'hidden', backgroundColor: 'transparent', minHeight: '100vh' }}>
-        <FogEllipses />
+      <div id="about-wrapper" data-snap-section className="relative bg-transparent min-h-fit py-section-gap">
+        
+        {/* STICKY BACKGROUND LAYER FOR MOBILE, ABSOLUTE FOR DESKTOP */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+          <div className="sticky top-0 h-screen w-full overflow-hidden md:relative md:h-full">
+            <FogEllipses />
 
-        {/* Katakana name watermark — bottom-left, ghost */}
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            bottom: '-2%',
-            left: '-2%',
-            fontFamily: "'Shippori Mincho', serif",
-            fontSize: 'clamp(6rem, 18vw, 20rem)',
-            lineHeight: 1,
-            color: 'rgba(255,255,255,0.035)',
-            transform: 'rotate(-15deg)',
-            pointerEvents: 'none',
-            userSelect: 'none',
-            zIndex: 0,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          スバディープ ゴレイン
+            {/* Katakana name watermark — bottom-left, ghost */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                bottom: '-2%',
+                left: '-2%',
+                fontFamily: "'Shippori Mincho', serif",
+                fontSize: 'clamp(6rem, 18vw, 20rem)',
+                lineHeight: 1,
+                color: 'rgba(255,255,255,0.035)',
+                transform: 'rotate(-15deg)',
+                pointerEvents: 'none',
+                userSelect: 'none',
+                zIndex: 0,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              スバディープ ゴレイン
+            </div>
+
+            {/* LAYER 1: Background Neural Grid — themeHue tinted */}
+            <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+              <motion.div
+                className="absolute inset-0 w-full h-[200%] neural-grid-animate"
+                style={{
+                  backgroundImage: `radial-gradient(circle, hsla(${themeHue}, 70%, 65%, 0.055) 1px, transparent 1px)`,
+                  backgroundSize: '60px 60px',
+                  x: gridX,
+                  y: gridY,
+                }}
+              />
+            </div>
+
+            {/* LAYER 1.5: Cursor Backlight Spotlight — themeHue */}
+            <motion.div
+              className="absolute w-[450px] h-[450px] rounded-full blur-[90px] pointer-events-none -translate-x-1/2 -translate-y-1/2 z-5 hidden md:block"
+              style={{
+                background: `radial-gradient(circle, hsla(${themeHue}, 80%, 65%, 0.2) 0%, hsla(${themeHue}, 70%, 55%, 0.07) 45%, transparent 70%)`,
+                x: aboutSmoothX,
+                y: aboutSmoothY,
+              }}
+              animate={{ opacity: isAboutHovered ? 1 : 0 }}
+              transition={{ duration: 0.4 }}
+            />
+
+            {/* LAYER 2: Ghost Kanji — breath pulse + mouse parallax */}
+            <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden select-none font-serif">
+              {/* 工 Kanji */}
+              <motion.div
+                animate={{
+                  x: [0, -20], y: [0, -30],
+                  opacity: [0.025, 0.09, 0.025],
+                  scale: [1, 1.04, 1],
+                }}
+                transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', times: [0, 0.5, 1] }}
+                className="absolute left-[8%] bottom-[20%] text-[20vw] text-white leading-none"
+              >
+                <motion.div style={{ x: kanji1X, y: kanji1Y }}>工</motion.div>
+              </motion.div>
+
+              {/* 房 Kanji */}
+              <motion.div
+                animate={{
+                  x: [0, 15], y: [0, 20],
+                  opacity: [0.025, 0.09, 0.025],
+                  scale: [1, 1.04, 1],
+                }}
+                transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: 3.3, times: [0, 0.5, 1] }}
+                className="absolute right-[8%] top-[15%] text-[15vw] text-white leading-none"
+              >
+                <motion.div style={{ x: kanji2X, y: kanji2Y }}>房</motion.div>
+              </motion.div>
+
+              {/* 脳 Kanji */}
+              <motion.div
+                animate={{
+                  x: [0, -25], y: [0, 10],
+                  opacity: [0.025, 0.09, 0.025],
+                  scale: [1, 1.04, 1],
+                }}
+                transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: 6.6, times: [0, 0.5, 1] }}
+                className="absolute left-[40%] top-[8%] text-[12vw] text-white leading-none"
+              >
+                <motion.div style={{ x: kanji3X, y: kanji3Y }}>脳</motion.div>
+              </motion.div>
+            </div>
+
+            {/* LAYER 2.5: Atmospheric Bokeh Circles — themeHue */}
+            <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
+              <div style={{
+                position: 'absolute', top: '10%', left: '-5%',
+                width: '400px', height: '400px', borderRadius: '50%',
+                background: `hsla(${themeHue}, 70%, 65%, 0.05)`,
+                filter: 'blur(80px)', pointerEvents: 'none', zIndex: 1,
+              }} />
+              <div style={{
+                position: 'absolute', bottom: '10%', right: '-5%',
+                width: '500px', height: '500px', borderRadius: '50%',
+                background: `hsla(${themeHue}, 50%, 55%, 0.04)`,
+                filter: 'blur(100px)', pointerEvents: 'none', zIndex: 1,
+              }} />
+              <div style={{
+                position: 'absolute', top: '40%', left: '30%',
+                width: '350px', height: '350px', borderRadius: '50%',
+                background: `hsla(${themeHue}, 70%, 65%, 0.03)`,
+                filter: 'blur(90px)', pointerEvents: 'none', zIndex: 1,
+              }} />
+            </div>
+          </div>
         </div>
 
         {/* About Me Section */}
@@ -822,96 +1002,8 @@ function App() {
           onMouseMove={handleAboutMouseMove}
           onMouseEnter={handleAboutMouseEnter}
           onMouseLeave={handleAboutMouseLeave}
-          className="min-h-screen w-full py-section-gap flex flex-col items-center justify-center relative overflow-hidden"
+          className="w-full py-4 flex flex-col items-center justify-center relative z-20"
         >
-          {/* LAYER 1: Background Neural Grid — themeHue tinted */}
-          <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-            <motion.div
-              className="absolute inset-0 w-full h-[200%] neural-grid-animate"
-              style={{
-                backgroundImage: `radial-gradient(circle, hsla(${themeHue}, 70%, 65%, 0.055) 1px, transparent 1px)`,
-                backgroundSize: '60px 60px',
-                x: gridX,
-                y: gridY,
-              }}
-            />
-          </div>
-
-          {/* LAYER 1.5: Cursor Backlight Spotlight — themeHue */}
-          <motion.div
-            className="absolute w-[450px] h-[450px] rounded-full blur-[90px] pointer-events-none -translate-x-1/2 -translate-y-1/2 z-5 hidden md:block"
-            style={{
-              background: `radial-gradient(circle, hsla(${themeHue}, 80%, 65%, 0.2) 0%, hsla(${themeHue}, 70%, 55%, 0.07) 45%, transparent 70%)`,
-              x: aboutSmoothX,
-              y: aboutSmoothY,
-            }}
-            animate={{ opacity: isAboutHovered ? 1 : 0 }}
-            transition={{ duration: 0.4 }}
-          />
-
-          {/* LAYER 2: Ghost Kanji — breath pulse + mouse parallax */}
-          <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden select-none font-serif">
-            {/* 工 Kanji — breath pulse phase 0 */}
-            <motion.div
-              animate={{
-                x: [0, -20], y: [0, -30],
-                opacity: [0.025, 0.09, 0.025],
-                scale: [1, 1.04, 1],
-              }}
-              transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', times: [0, 0.5, 1] }}
-              className="absolute left-[8%] bottom-[20%] text-[20vw] text-white leading-none"
-            >
-              <motion.div style={{ x: kanji1X, y: kanji1Y }}>工</motion.div>
-            </motion.div>
-
-            {/* 房 Kanji — breath pulse phase offset 3.3s */}
-            <motion.div
-              animate={{
-                x: [0, 15], y: [0, 20],
-                opacity: [0.025, 0.09, 0.025],
-                scale: [1, 1.04, 1],
-              }}
-              transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: 3.3, times: [0, 0.5, 1] }}
-              className="absolute right-[8%] top-[15%] text-[15vw] text-white leading-none"
-            >
-              <motion.div style={{ x: kanji2X, y: kanji2Y }}>房</motion.div>
-            </motion.div>
-
-            {/* 脳 Kanji — breath pulse phase offset 6.6s */}
-            <motion.div
-              animate={{
-                x: [0, -25], y: [0, 10],
-                opacity: [0.025, 0.09, 0.025],
-                scale: [1, 1.04, 1],
-              }}
-              transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: 6.6, times: [0, 0.5, 1] }}
-              className="absolute left-[40%] top-[8%] text-[12vw] text-white leading-none"
-            >
-              <motion.div style={{ x: kanji3X, y: kanji3Y }}>脳</motion.div>
-            </motion.div>
-          </div>
-
-          {/* LAYER 2.5: Atmospheric Bokeh Circles — themeHue */}
-          <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
-            <div style={{
-              position: 'absolute', top: '10%', left: '-5%',
-              width: '400px', height: '400px', borderRadius: '50%',
-              background: `hsla(${themeHue}, 70%, 65%, 0.05)`,
-              filter: 'blur(80px)', pointerEvents: 'none', zIndex: 1,
-            }} />
-            <div style={{
-              position: 'absolute', bottom: '10%', right: '-5%',
-              width: '500px', height: '500px', borderRadius: '50%',
-              background: `hsla(${themeHue}, 50%, 55%, 0.04)`,
-              filter: 'blur(100px)', pointerEvents: 'none', zIndex: 1,
-            }} />
-            <div style={{
-              position: 'absolute', top: '40%', left: '30%',
-              width: '350px', height: '350px', borderRadius: '50%',
-              background: `hsla(${themeHue}, 70%, 65%, 0.03)`,
-              filter: 'blur(90px)', pointerEvents: 'none', zIndex: 1,
-            }} />
-          </div>
 
           {/* LAYER 3: Main Content */}
           <motion.div
@@ -944,14 +1036,32 @@ function App() {
               >
                 {t('about.subtitle')}
               </motion.p>
-              <div className="flex flex-col gap-4 mb-10 max-w-2xl">
-                <motion.p variants={aboutItemVariants} className="font-body-lg text-body-lg text-on-surface leading-relaxed">
+              <div className="flex flex-col gap-4 mb-6 max-w-2xl mt-10 md:mt-0">
+                <motion.p 
+                  initial={{ opacity: 0, x: -50, filter: "blur(5px)" }}
+                  whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                  viewport={{ once: false, margin: "-15%" }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  className="font-body-lg text-body-lg text-on-surface leading-relaxed"
+                >
                   {t('about.p1')}
                 </motion.p>
-                <motion.p variants={aboutItemVariants} className="font-body-lg text-body-lg text-on-surface/80 leading-relaxed tracking-tight">
+                <motion.p 
+                  initial={{ opacity: 0, x: 50, filter: "blur(5px)" }}
+                  whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                  viewport={{ once: false, margin: "-15%" }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+                  className="font-body-lg text-body-lg text-on-surface/80 leading-relaxed tracking-tight"
+                >
                   {t('about.p2')}
                 </motion.p>
-                <motion.p variants={aboutItemVariants} className="font-body-lg text-body-lg text-on-surface/70 leading-relaxed tracking-tight">
+                <motion.p 
+                  initial={{ opacity: 0, y: 50, filter: "blur(5px)" }}
+                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  viewport={{ once: false, margin: "-15%" }}
+                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+                  className="font-body-lg text-body-lg text-on-surface/70 leading-relaxed tracking-tight"
+                >
                   {t('about.p3')}
                 </motion.p>
               </div>
@@ -1004,10 +1114,10 @@ function App() {
       </div>
 
       {/* ====== SECTION 5: Skills ====== */}
-      <div id="skills-wrapper" data-snap-section style={{ position: 'relative', overflow: 'hidden', backgroundColor: 'transparent', minHeight: '100vh' }}>
+      <div id="skills-wrapper" data-snap-section className="relative overflow-hidden bg-transparent min-h-fit w-full py-section-gap">
         {/* Particle constellation replaces LightRays per vision doc */}
         <ParticleConstellation themeHue={themeHue} />
-        <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap" style={{ position: 'relative', zIndex: 1 }}>
+        <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4" style={{ position: 'relative', zIndex: 1 }}>
           {/* Skills & Tech Stack Section */}
           <section id="skills" className="w-full mb-section-gap relative">
             <Suspense fallback={null}>
@@ -1018,7 +1128,7 @@ function App() {
       </div>
 
       {/* ====== SECTION 6: Experience ====== */}
-      <div id="experience-wrapper" data-snap-section style={{ position: 'relative', overflow: 'clip', backgroundColor: 'transparent', minHeight: '100vh' }}>
+      <div id="experience-wrapper" data-snap-section className="py-section-gap" style={{ position: 'relative', overflow: 'clip', backgroundColor: 'transparent' }}>
         <div style={{
           position: 'absolute',
           inset: 0,
@@ -1026,7 +1136,7 @@ function App() {
           pointerEvents: 'none',
           zIndex: 1,
         }} />
-        <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap">
+        <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4">
           {/* Experience / Timeline Section */}
           <section id="experience" className="w-full mb-section-gap relative">
             <Suspense fallback={null}>
@@ -1037,8 +1147,8 @@ function App() {
       </div>
 
       {/* ====== SECTION 7: Contact ====== */}
-      <div id="contact-wrapper" data-snap-section style={{ position: 'relative', overflow: 'hidden', backgroundColor: 'transparent', minHeight: '100vh' }}>
-        <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pt-section-gap pb-4">
+      <div id="contact-wrapper" data-snap-section className="py-section-gap" style={{ position: 'relative', overflow: 'hidden', backgroundColor: 'transparent' }}>
+        <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4">
           <ContactSection themeHue={themeHue} />
         </main>
       </div>

@@ -254,7 +254,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="absolute left-10 top-40 z-20 pointer-events-auto"
+          className="absolute left-[0%] top-[32%] md:left-10 md:top-40 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-left"
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={leftCtrl} variants={leftBadgeVariants} initial="visible">
@@ -268,7 +268,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.35 }}
-          className="absolute left-1/4 top-24 z-20 pointer-events-auto"
+          className="absolute left-[18%] top-[18%] md:left-1/4 md:top-24 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-left"
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={leftCtrl} variants={leftBadgeVariants} initial="visible">
@@ -282,7 +282,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="absolute right-10 top-40 z-20 pointer-events-auto"
+          className="absolute right-[0%] top-[32%] md:right-10 md:top-40 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-right"
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={rightCtrl} variants={rightBadgeVariants} initial="visible">
@@ -296,7 +296,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.65 }}
-          className="absolute right-1/4 top-24 z-20 pointer-events-auto"
+          className="absolute right-[18%] top-[18%] md:right-1/4 md:top-24 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-right"
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={rightCtrl} variants={rightBadgeVariants} initial="visible">
@@ -318,7 +318,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
             variants={labelVariants}
             initial="visible"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-            className="mt-8 text-sm md:text-base tracking-[0.3em] uppercase text-[#d6c2c4]/40 italic mb-2"
+            className="mt-8 text-xs md:text-base tracking-[0.3em] uppercase text-[#d6c2c4]/40 italic mb-2"
           >
             {t('hero.nocturne')}
           </motion.p>
@@ -328,7 +328,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
             initial={{ opacity: 0, y: 20, filter: 'blur(16px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 1.0, ease: [0.25, 1, 0.5, 1], delay: 0.3 }}
-            className="text-5xl md:text-8xl font-light mb-4 tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,192,203,0.3)]"
+            className="text-3xl sm:text-4xl md:text-8xl font-light mb-4 tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,192,203,0.3)]"
             style={{ fontFamily: "'Shippori Mincho', serif" }}
           >
             <HeroTypewriter key={t('hero.name')} text={t('hero.name')} delay={0.5} speed={90} />
@@ -339,7 +339,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
             initial={{ opacity: 0, y: 16, filter: 'blur(10px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 1.0, ease: [0.25, 1, 0.5, 1], delay: 0.55 }}
-            className="text-2xl md:text-4xl pb-3 font-light min-h-[2rem] md:min-h-[3rem]"
+            className="text-xl md:text-4xl pb-3 font-light min-h-[2rem] md:min-h-[3rem]"
           >
             <HeroTypewriter
               key={t('hero.subtitle')}
@@ -356,7 +356,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
             animate={labelCtrl}
             variants={labelVariants}
             initial="visible"
-            className="text-gray-400 mb-9 max-w-2xl text-lg mt-4"
+            className="text-gray-400 mb-9 max-w-2xl text-sm md:text-lg mt-4"
           >
             {t('hero.tagline')}
           </motion.p>

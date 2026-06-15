@@ -23,7 +23,7 @@ export function useSectionSnap({ freeScrollIds = [] } = {}) {
   const isSnapping = useRef(false);
   const lastSnapTime = useRef(0);
   const accDelta = useRef(0);
-  const THRESHOLD = 30; // wheel delta threshold before triggering snap
+  const THRESHOLD = 80; // increased wheel delta threshold to prevent accidental snaps
 
   useEffect(() => {
     if (!lenis) return;
@@ -104,23 +104,13 @@ export function useSectionSnap({ freeScrollIds = [] } = {}) {
       snapTo(direction);
     };
 
-    // Touch snap
-    let touchStartY = 0;
-    const onTouchStart = (e) => { touchStartY = e.touches[0].clientY; };
-    const onTouchEnd = (e) => {
-      const dy = touchStartY - e.changedTouches[0].clientY;
-      if (Math.abs(dy) < 40) return;
-      snapTo(dy > 0 ? 1 : -1);
-    };
+    // Touch snap is intentionally disabled. Native touch scrolling feels much better
+    // on mobile/tablets than forced section snapping, which often causes lag and frustration.
 
     window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
 
     return () => {
       window.removeEventListener('wheel', onWheel);
-      window.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchend', onTouchEnd);
     };
   }, [lenis, freeScrollIds]);
 }

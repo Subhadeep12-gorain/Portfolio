@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 // IntroScreen
 // ─────────────────────────────────────────────────────────────────────────────
 
-const STRIP_COUNT = 7;
+// Strip count is dynamically calculated per viewport
 
 const blindContainerVariants = {
   visible: {},
@@ -277,7 +277,8 @@ const TreeCanvas = ({ themeHue = 220 }) => {
       const sx = width / 2;
       const sy = height * 0.88;
       const trunkLen = height * 0.24;
-      branches.push(new Branch(sx, sy, trunkLen, -Math.PI / 2, 7, DEPTH, 0));
+      const baseWidth = width < 600 ? 3 : 7;
+      branches.push(new Branch(sx, sy, trunkLen, -Math.PI / 2, baseWidth, DEPTH, 0));
       startTime = null;
       started = true;
     }
@@ -459,6 +460,10 @@ const TreeCanvas = ({ themeHue = 220 }) => {
 // IntroScreen
 // ─────────────────────────────────────────────────────────────────────────────
 const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
+  const [stripCount] = useState(() => {
+    if (typeof window === 'undefined') return 10;
+    return window.innerWidth < 768 ? 7 : 10;
+  });
   const [phase, setPhase] = useState('tree'); // tree | strips | open | done
   const [snapshot, setSnapshot] = useState(null);
   const [treeGlow, setTreeGlow] = useState(false);
@@ -534,16 +539,13 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
               />
             ))}
 
-            {/* Tree canvas — fills upper ~75% of screen */}
+            {/* Tree canvas — responsive size */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.45 }}
+              className="absolute z-[3] left-1/2 -translate-x-1/2 top-[45%] -translate-y-1/2 w-[min(80vw,350px)] h-[min(80vw,350px)] md:left-0 md:translate-x-0 md:top-0 md:translate-y-0 md:w-full md:h-[74%]"
               style={{
-                position: 'absolute',
-                top: 0, left: 0, right: 0,
-                bottom: '26%', // leave space for text below
-                zIndex: 3,
                 filter: treeGlow
                   ? `drop-shadow(0 0 22px hsla(${themeHue}, 100%, 72%, 0.55))`
                   : 'none',
@@ -561,14 +563,7 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                   initial={{ opacity: 0, y: 18, x: '-50%', filter: 'blur(10px)' }}
                   animate={{ opacity: 1, y: 0, x: '-50%', filter: 'blur(0px)' }}
                   transition={{ duration: 1.0, ease: [0.25, 1, 0.5, 1] }}
-                  style={{
-                    position: 'absolute',
-                    bottom: '4%',
-                    left: '50%',
-                    textAlign: 'center',
-                    zIndex: 10,
-                    pointerEvents: 'none',
-                  }}
+                  className="absolute z-10 text-center pointer-events-none left-1/2 top-[calc(45%+min(40vw,175px)+20px)] md:top-auto md:bottom-[4%]"
                 >
                   <div style={{
                     fontFamily: "'Shippori Mincho', serif",
@@ -614,14 +609,14 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
               animate={phase === 'open' ? 'exit' : 'visible'}
               style={{ zIndex: 10 }}
             >
-              {Array.from({ length: STRIP_COUNT }).map((_, i) => (
+              {Array.from({ length: stripCount }).map((_, i) => (
                 <motion.div
                   key={i}
                   variants={makeStripVariant(i)}
                   style={{
                     position: 'absolute', top: 0,
-                    left: `calc(100vw / ${STRIP_COUNT} * ${i})`,
-                    width: `calc(100vw / ${STRIP_COUNT} + 2px)`,
+                    left: `calc(100vw / ${stripCount} * ${i})`,
+                    width: `calc(100vw / ${stripCount} + 2px)`,
                     height: '100vh',
                     backgroundColor: '#05050a',
                     overflow: 'hidden',
@@ -631,16 +626,15 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                   <div style={{
                     position: 'absolute',
                     top: 0,
-                    left: `calc(-100vw / ${STRIP_COUNT} * ${i})`,
+                    left: `calc(-100vw / ${stripCount} * ${i})`,
                     width: '100vw',
                     height: '100vh',
                   }}>
                     {/* Render the exact same visual inside the moving strip */}
                     {snapshot && (
-                      <div style={{
-                        position: 'absolute',
-                        top: 0, left: 0, right: 0,
-                        bottom: '26%',
+                      <div 
+                        className="absolute left-1/2 -translate-x-1/2 top-[45%] -translate-y-1/2 w-[min(80vw,350px)] h-[min(80vw,350px)] md:left-0 md:translate-x-0 md:top-0 md:translate-y-0 md:w-full md:h-[74%]"
+                        style={{
                         filter: treeGlow ? `drop-shadow(0 0 22px hsla(${themeHue}, 100%, 72%, 0.55))` : 'none',
                       }}>
                          <img src={snapshot} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="Tree Snapshot" />
@@ -648,13 +642,7 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                     )}
                     {showText && (
                       <div
-                        style={{
-                          position: 'absolute',
-                          bottom: '4%',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          textAlign: 'center',
-                        }}
+                        className="absolute text-center left-1/2 -translate-x-1/2 top-[calc(45%+min(40vw,175px)+20px)] md:top-auto md:bottom-[4%]"
                       >
                         <div style={{
                           fontFamily: "'Shippori Mincho', serif",

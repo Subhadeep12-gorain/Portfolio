@@ -58,7 +58,7 @@
 
   /* === Spacing === */
   --spacing-margin-mobile: 24px;
-  --spacing-section-gap: 160px;
+  --spacing-section-gap: 32px;
   --spacing-container-max: 1440px;
   --spacing-margin-desktop: 80px;
   --spacing-gutter: 32px;
@@ -135,13 +135,13 @@ input, textarea, select {
 }
 
 .py-section-gap {
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: 24px;
+  padding-bottom: 24px;
 }
 @media (min-width: 768px) {
   .py-section-gap {
-    padding-top: 120px;
-    padding-bottom: 120px;
+    padding-top: 140px;
+    padding-bottom: 140px;
   }
 }
 

@@ -64,7 +64,7 @@ export default {
                         },
                         "spacing": {
                                 "margin-mobile": "24px",
-                                "section-gap": "160px",
+                                "section-gap": "80px",
                                 "container-max": "1440px",
                                 "margin-desktop": "80px",
                                 "gutter": "32px",
