@@ -386,7 +386,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
         </motion.div>
       </div>
 
-      {/* ── Background elements — untouched ────────────────────────────────── */}
+      {/* ── Background elements ─────────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -396,7 +396,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           {/* Transparent overlay — let GlobalWeatherManager show through */}
           <div className="absolute inset-0 bg-black/30" />
           <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-b from-pink-500/8 to-purple-600/8 blur-3xl" />
-        <div className="absolute top-0 w-[100%] left-1/2 transform -translate-x-1/2 h-full z-20 pointer-events-none">
+        <div className="absolute top-0 w-[100%] left-1/2 transform -translate-x-1/2 h-full pointer-events-none">
           <Lightning hue={themeHue} xOffset={0} speed={1.2} intensity={0.5} size={1.5} />
         </div>
         
