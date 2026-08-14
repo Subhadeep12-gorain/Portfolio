@@ -151,8 +151,10 @@ const TreeCanvas = ({ themeHue = 220 }) => {
     const branchIdxBuffer = gl.createBuffer();
     const leafBuffer = gl.createBuffer();
 
-    const MAX_BRANCHES = 2000;
-    const MAX_LEAVES = 2000;
+    // Use reduced complexity on mobile to free up main thread during load
+    const isMobileDevice = window.innerWidth < 768;
+    const MAX_BRANCHES = isMobileDevice ? 600 : 2000;
+    const MAX_LEAVES = isMobileDevice ? 400 : 2000;
 
     const branchPositions = new Float32Array(MAX_BRANCHES * 8);
     const branchIndices = new Uint16Array(MAX_BRANCHES * 6);
@@ -177,7 +179,7 @@ const TreeCanvas = ({ themeHue = 220 }) => {
     let height = 0;
     let animationFrameId;
     const DURATION = 3200;
-    const DEPTH = 5;
+    const DEPTH = isMobileDevice ? 4 : 5;
 
     let branches = [];
     let leaves = [];

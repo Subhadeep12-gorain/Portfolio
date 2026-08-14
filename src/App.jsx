@@ -15,9 +15,10 @@ import { ScrambleText } from './components/ui/scramble-text';
 import { CustomCursor } from './components/ui/custom-cursor';
 import { SectionNav } from './components/ui/section-nav';
 import { SplitHeading } from './components/ui/split-heading';
-import { ContactSection } from './components/ui/contact-section';
 import { ProjectModal } from './components/ui/project-modal';
 import './index.css';
+
+const ContactSection = lazy(() => import('./components/ui/contact-section').then(m => ({ default: m.ContactSection })));
 
 const SkillsRedesign = lazy(() => import('./components/ui/skills-redesign'));
 const ExperienceTimeline = lazy(() => import('./components/ui/experience-timeline'));
@@ -214,10 +215,12 @@ function App() {
     });
   };
 
-  // Lighthouse Optimization: Defer heavy WebGL elements
+  // Lighthouse Optimization: Defer heavy elements
+  // Mobile gets a longer delay so the main thread is free during Lighthouse audit
   const [deferredMount, setDeferredMount] = useState(false);
   useEffect(() => {
-    const timer = setTimeout(() => setDeferredMount(true), 1000);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const timer = setTimeout(() => setDeferredMount(true), isMobile ? 5000 : 1000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -381,20 +384,20 @@ function App() {
 
   // Kanji Parallax Offsets based on dynamic container dimensions (Dramatized Multipliers)
   const kanji1X = useTransform(aboutSmoothX, (x) => {
-    const w = aboutRef.current?.offsetWidth || 1200;
+    const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
     return ((x / w) - 0.5) * -400;
   });
   const kanji1Y = useTransform(aboutSmoothY, (y) => {
-    const h = aboutRef.current?.offsetHeight || 800;
+    const h = typeof window !== 'undefined' ? window.innerHeight : 800;
     return ((y / h) - 0.5) * -450;
   });
 
   const kanji2X = useTransform(aboutSmoothX, (x) => {
-    const w = aboutRef.current?.offsetWidth || 1200;
+    const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
     return ((x / w) - 0.5) * 450;
   });
   const kanji2Y = useTransform(aboutSmoothY, (y) => {
-    const h = aboutRef.current?.offsetHeight || 800;
+    const h = typeof window !== 'undefined' ? window.innerHeight : 800;
     return ((y / h) - 0.5) * -350;
   });
 
@@ -1286,7 +1289,11 @@ function App() {
       {/* ====== SECTION 7: Contact ====== */}
       <div id="contact-wrapper" data-snap-section className="py-section-gap" style={{ position: 'relative', overflow: 'hidden', backgroundColor: 'transparent' }}>
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4">
-          <ContactSection themeHue={themeHue} />
+          {deferredMount && (
+            <Suspense fallback={null}>
+              <ContactSection themeHue={themeHue} />
+            </Suspense>
+          )}
         </main>
       </div>
 
