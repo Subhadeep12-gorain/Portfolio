@@ -198,6 +198,16 @@ function App() {
     i18n.changeLanguage(i18n.language === 'en' ? 'jp' : 'en');
   };
 
+  // Load font CSS non-blocking after first paint so it never blocks render
+  useEffect(() => {
+    const load = () => import('./font-loader');
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(load);
+    } else {
+      setTimeout(load, 200);
+    }
+  }, []);
+
   const [introDone, setIntroDone] = useState(false);
   const [lowPowerMode, setLowPowerMode] = useState(() => {
     if (typeof window !== 'undefined') {

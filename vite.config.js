@@ -14,9 +14,12 @@ export default defineConfig({
     },
   },
   build: {
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Keep @fontsource OUT of vendor so it lands in the lazy font-loader chunk
+          if (id.includes('@fontsource')) return undefined;
           if (id.includes('node_modules')) {
             if (id.includes('react') || id.includes('react-dom')) return 'vendor-react';
             if (id.includes('framer-motion')) return 'vendor-framer';
@@ -28,3 +31,4 @@ export default defineConfig({
     }
   }
 })
+
