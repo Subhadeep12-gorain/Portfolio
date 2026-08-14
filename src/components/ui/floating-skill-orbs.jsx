@@ -111,8 +111,8 @@ export function FloatingSkillOrbs({ skillsData, activeNodeId, setActiveNodeId, t
                     className="absolute top-full whitespace-nowrap text-center"
                   >
                     <span 
-                      className="font-label-sm tracking-[0.1em] px-3 py-1 rounded-full border border-white/5 bg-black/50 backdrop-blur-md"
-                      style={{ color: `hsl(${themeHue}, 75%, 75%)` }}
+                      className="font-label-sm tracking-[0.1em] px-3 py-1 rounded-full border border-white/5 bg-black/80 backdrop-blur-md"
+                      style={{ color: `hsl(${themeHue}, 80%, 90%)` }}
                     >
                       {item.title}
                     </span>

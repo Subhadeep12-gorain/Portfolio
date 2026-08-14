@@ -579,7 +579,7 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                   <div style={{
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontSize: '0.68rem',
-                    color: `hsla(${themeHue}, 55%, 72%, 0.4)`,
+                    color: `hsla(${themeHue}, 55%, 72%, 0.8)`,
                     letterSpacing: '0.44em',
                     marginTop: '0.9rem',
                     textTransform: 'uppercase',
@@ -637,7 +637,7 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                         style={{
                         filter: treeGlow ? `drop-shadow(0 0 22px hsla(${themeHue}, 100%, 72%, 0.55))` : 'none',
                       }}>
-                         <img src={snapshot} style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="Tree Snapshot" />
+                         <img src={snapshot} width="1080" height="1080" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain' }} alt="Tree Snapshot" />
                       </div>
                     )}
                     {showText && (
@@ -658,7 +658,7 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                         <div style={{
                           fontFamily: "'Space Grotesk', sans-serif",
                           fontSize: '0.68rem',
-                          color: `hsla(${themeHue}, 55%, 72%, 0.4)`,
+                          color: `hsla(${themeHue}, 55%, 72%, 0.8)`,
                           letterSpacing: '0.44em',
                           marginTop: '0.9rem',
                           textTransform: 'uppercase',

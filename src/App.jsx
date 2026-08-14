@@ -960,31 +960,33 @@ function App() {
 
             {/* Mobile Looping Marquee */}
             <div className="block md:hidden relative z-10 mt-4 w-full overflow-hidden" style={{ height: '300px' }}>
-              <Suspense fallback={null}>
-                <motion.div
-                  className="flex gap-4"
-                  animate={{ x: ["0%", "-50%"] }}
-                  transition={{ ease: "linear", duration: 25, repeat: Infinity }}
-                  style={{ width: "max-content" }}
-                >
-                  {[...Array(2)].map((_, i) => (
-                    <div key={i} className="flex gap-4">
-                      <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.japanTourism)} tags={['Streamlit', 'Python', 'Pandas', 'CatBoost']} title={t('projects.p1_title')} desc={t('projects.p1_desc')} themeHue={themeHue} t={t}>
-                        <JapanMapVisual isHovered={true} />
-                      </MobileProjectCard>
-                      <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.assessIQ)} tags={['React', 'Vite', 'Frontend']} title={t('projects.p3_title')} desc={t('projects.p3_desc')} themeHue={themeHue} t={t}>
-                        <EcommerceVisual isHovered={true} />
-                      </MobileProjectCard>
-                      <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.noteApp)} tags={['React Native', 'Expo', 'AsyncStorage']} title={t('projects.p2_title')} themeHue={themeHue} t={t}>
-                        <PhoneAppVisual isHovered={true} />
-                      </MobileProjectCard>
-                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain" title={t('projects.view_github')} desc={t('projects.github_activity')} themeHue={themeHue} t={t} github>
-                        <GitHubHeatmapVisual />
-                      </MobileProjectCard>
-                    </div>
-                  ))}
-                </motion.div>
-              </Suspense>
+              {deferredMount && (
+                <Suspense fallback={null}>
+                  <motion.div
+                    className="flex gap-4"
+                    animate={{ x: ["0%", "-50%"] }}
+                    transition={{ ease: "linear", duration: 25, repeat: Infinity }}
+                    style={{ width: "max-content" }}
+                  >
+                    {[...Array(2)].map((_, i) => (
+                      <div key={i} className="flex gap-4">
+                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.japanTourism)} tags={['Streamlit', 'Python', 'Pandas', 'CatBoost']} title={t('projects.p1_title')} desc={t('projects.p1_desc')} themeHue={themeHue} t={t}>
+                          <JapanMapVisual isHovered={true} />
+                        </MobileProjectCard>
+                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.assessIQ)} tags={['React', 'Vite', 'Frontend']} title={t('projects.p3_title')} desc={t('projects.p3_desc')} themeHue={themeHue} t={t}>
+                          <EcommerceVisual isHovered={true} />
+                        </MobileProjectCard>
+                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.noteApp)} tags={['React Native', 'Expo', 'AsyncStorage']} title={t('projects.p2_title')} themeHue={themeHue} t={t}>
+                          <PhoneAppVisual isHovered={true} />
+                        </MobileProjectCard>
+                        <MobileProjectCard href="https://github.com/Subhadeep12-gorain" title={t('projects.view_github')} desc={t('projects.github_activity')} themeHue={themeHue} t={t} github>
+                          <GitHubHeatmapVisual />
+                        </MobileProjectCard>
+                      </div>
+                    ))}
+                  </motion.div>
+                </Suspense>
+              )}
             </div>
           </section>
         </main>
@@ -1251,9 +1253,11 @@ function App() {
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4" style={{ position: 'relative', zIndex: 1 }}>
           {/* Skills & Tech Stack Section */}
           <section id="skills" className="w-full mb-section-gap relative">
-            <Suspense fallback={null}>
-              <SkillsRedesign themeHue={themeHue} />
-            </Suspense>
+            {deferredMount && (
+              <Suspense fallback={null}>
+                <SkillsRedesign themeHue={themeHue} />
+              </Suspense>
+            )}
           </section>
         </main>
       </div>
@@ -1270,9 +1274,11 @@ function App() {
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4">
           {/* Experience / Timeline Section */}
           <section id="experience" className="w-full mb-section-gap relative">
-            <Suspense fallback={null}>
-              <ExperienceTimeline themeHue={themeHue} />
-            </Suspense>
+            {deferredMount && (
+              <Suspense fallback={null}>
+                <ExperienceTimeline themeHue={themeHue} />
+              </Suspense>
+            )}
           </section>
         </main>
       </div>
@@ -1288,9 +1294,11 @@ function App() {
       <div style={{ width: '100%', height: 40, pointerEvents: 'none', position: 'relative', zIndex: 1, background: 'linear-gradient(to bottom, rgb(8,8,25), #000000)' }} />
 
       {/* ====== UPGRADED CINEMATIC FOOTER ====== */}
-      <Suspense fallback={null}>
-        <CinematicFooter />
-      </Suspense>
+      {deferredMount && (
+        <Suspense fallback={null}>
+          <CinematicFooter />
+        </Suspense>
+      )}
 
       {/* ====== SCROLL TO TOP BUTTON ====== */}
       <AnimatePresence>
