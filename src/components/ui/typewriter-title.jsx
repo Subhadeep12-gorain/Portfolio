@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -15,6 +15,7 @@ export const TypewriterTitle = ({ speed = 100, className = '' }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
   const { t } = useTranslation();
+  const prefersReducedMotion = useReducedMotion();
 
   const word = t('tech.title1');
   const [displayedCount, setDisplayedCount] = useState(0);
@@ -52,6 +53,20 @@ export const TypewriterTitle = ({ speed = 100, className = '' }) => {
     const timer = setTimeout(() => setShimmerDone(true), 1400);
     return () => clearTimeout(timer);
   }, [typingDone]);
+
+  // Static fallback: if user prefers reduced motion, skip all animation
+  // and render the complete title immediately in its final settled state.
+  if (prefersReducedMotion) {
+    return (
+      <h2 ref={ref} className={`font-serif text-[2.2rem] md:text-[3.5rem] font-normal text-left text-white mb-8 ${className}`}>
+        <span className="inline-block">{word}</span>
+        <br />
+        <span className="italic inline-block font-serif text-[2.2rem] md:text-[3.5rem] font-normal mastery-shimmer-settled">
+          {t('tech.title2')}
+        </span>
+      </h2>
+    );
+  }
 
   return (
     <h2 ref={ref} className={`font-serif text-[2.2rem] md:text-[3.5rem] font-normal text-left text-white mb-8 ${className}`}>

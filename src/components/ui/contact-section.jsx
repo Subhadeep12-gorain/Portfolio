@@ -209,7 +209,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
             }}
             className="flex w-full justify-center lg:justify-start"
           >
-            <MagneticButton themeHue={themeHue} href="mailto:subhadeepgorain@example.com" icon={Mail}>
+            <MagneticButton themeHue={themeHue} href="mailto:subhadeepgorain8@gmail.com" icon={Mail}>
               Email
             </MagneticButton>
           </motion.div>

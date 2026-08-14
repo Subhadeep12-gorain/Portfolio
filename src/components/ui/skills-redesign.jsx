@@ -15,9 +15,9 @@ export default function SkillsRedesign({ themeHue = 220 }) {
   const skillsData = useMemo(() => [
     {
       id: 1,
-      title: "Machine Learning",
+      title: t('skills.ml_title') || "Machine Learning",
       icon: Brain,
-      items: ["XGBoost, CatBoost, Scikit-learn", "Model tuning and time-aware cross-validation", "Classification and regression pipelines", "84% accuracy, AUC 0.89 on real forecasting project"],
+      items: [t('skills.ml_1'), t('skills.ml_2'), t('skills.ml_3'), t('skills.ml_4')],
     },
     {
       id: 2,
@@ -29,19 +29,19 @@ export default function SkillsRedesign({ themeHue = 220 }) {
       id: 3,
       title: t('skills.node_data_viz'),
       icon: BarChart,
-      items: ["Streamlit dashboard development", "Feature importance visualisation", "Model performance comparison dashboards", "Interactive data exploration interfaces"],
+      items: [t('skills.dv_1'), t('skills.dv_2'), t('skills.dv_3'), t('skills.dv_4')],
     },
     {
       id: 4,
       title: t('skills.node_databases'),
       icon: Server,
-      items: ["MySQL — relational data modelling", "MongoDB — document-based storage", "Query optimisation basics", "Data storage for ML pipeline integration"],
+      items: [t('skills.db_1'), t('skills.db_2'), t('skills.db_3'), t('skills.db_4')],
     },
     {
       id: 5,
       title: t('skills.node_programming'),
       icon: Code,
-      items: ["Python — primary language for all ML/data work", "JavaScript — frontend and React projects", "Java — foundational OOP (Udemy certified)", "GitHub — version control, project documentation"],
+      items: [t('skills.pr_1'), t('skills.pr_2'), t('skills.pr_3'), t('skills.pr_4')],
     }
   ], [t]);
 

@@ -8,7 +8,7 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
  * - Ring expands on hover over interactive elements
  * - Hidden on touch/mobile devices
  */
-export function CustomCursor() {
+export function CustomCursor({ lowPowerMode = false }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTouchDevice] = useState(() => {
@@ -59,7 +59,7 @@ export function CustomCursor() {
     };
   }, [dotX, dotY, isTouchDevice]);
 
-  if (isTouchDevice) return null;
+  if (isTouchDevice || lowPowerMode) return null;
 
   return (
     <>

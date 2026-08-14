@@ -16,6 +16,7 @@ import { CustomCursor } from './components/ui/custom-cursor';
 import { SectionNav } from './components/ui/section-nav';
 import { SplitHeading } from './components/ui/split-heading';
 import { ContactSection } from './components/ui/contact-section';
+import { ProjectModal } from './components/ui/project-modal';
 import './index.css';
 
 const SkillsRedesign = lazy(() => import('./components/ui/skills-redesign'));
@@ -142,15 +143,9 @@ const aboutItemVariants = {
 };
 
 
-const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, github = false }) => {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 block flex-shrink-0 bg-gradient-to-br from-surface-container to-surface"
-      style={{ width: '280px', height: '300px' }}
-    >
+const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, github = false, onClick }) => {
+  const content = (
+    <>
       {github && (
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
           <rect x="0.75" y="0.75" width="calc(100% - 1.5px)" height="calc(100% - 1.5px)" rx="8" ry="8" className="border-trace-rect" />
@@ -174,6 +169,23 @@ const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, git
           </span>
         </div>
       </div>
+    </>
+  );
+
+  const className = "relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 block flex-shrink-0 bg-gradient-to-br from-surface-container to-surface text-left";
+  const style = { width: '280px', height: '300px' };
+
+  if (onClick) {
+    return (
+      <button onClick={onClick} className={className} style={style}>
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={className} style={style}>
+      {content}
     </a>
   );
 };
@@ -186,7 +198,81 @@ function App() {
   };
 
   const [introDone, setIntroDone] = useState(false);
+  const [lowPowerMode, setLowPowerMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('lowPowerMode');
+      return saved ? JSON.parse(saved) : window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+    return false;
+  });
+
+  const toggleLowPowerMode = () => {
+    setLowPowerMode(prev => {
+      const next = !prev;
+      localStorage.setItem('lowPowerMode', JSON.stringify(next));
+      return next;
+    });
+  };
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const [selectedProject, setSelectedProject] = useState(null);
+  
+  const handleProjectClick = (e, projectData) => {
+    e.preventDefault();
+    setSelectedProject(projectData);
+  };
+  
+  // Data for the modals
+  const projectData = {
+    japanTourism: {
+      index: 1,
+      title: t('projects.p1_title'),
+      brief: t('projects.p1_desc'),
+      tags: ['Streamlit', 'Python', 'Pandas', 'CatBoost'],
+      approach: [
+        'Forecasts 19-year historical data (2008–2026) for all 47 prefectures with recursive chaining for post-2023 predictions',
+        'Visualizes prefecture-level trends with interactive charts showing actual vs. predicted overnight stays and seasonal patterns',
+        'Derives peak/no-peak classification using cross-validated 70th-percentile thresholds on per-prefecture predictions (2008–2023 train set)',
+        'Displays model performance metrics including Test RMSE (107,132) and comparative regression diagnostics across all regions'
+      ],
+      metric: { value: 47, unit: ' Prefectures', label: 'Real-time forecasting dashboard built and deployed' },
+      year: '2025',
+      github: 'https://github.com/Subhadeep12-gorain/japan-tourism_forecasting',
+      demo: 'https://japan-tourism-forecasting-dashboard.streamlit.app/'
+    },
+    assessIQ: {
+      index: 2,
+      title: t('projects.p3_title'),
+      brief: t('projects.p3_desc'),
+      tags: ['React', 'Vite', 'Frontend'],
+      approach: [
+        'Architected role-based dashboards tailored for Teachers, Students, Parents, and Admins',
+        'Implemented automated assessment delivery and seamless proctoring interfaces',
+        'Built comprehensive performance tracking and visualization components',
+        'Prepared infrastructure for upcoming AI model integration for question generation'
+      ],
+      metric: { value: 4, unit: ' Roles', label: 'Distinct user experiences delivered via single SPA' },
+      year: '2026',
+      github: 'https://github.com/Subhadeep12-gorain/AssessIQ',
+      demo: 'https://assessiq.vercel.app'
+    },
+    noteApp: {
+      index: 3,
+      title: t('projects.p2_title'),
+      brief: t('projects.p2_desc'),
+      tags: ['React Native', 'Expo', 'AsyncStorage'],
+      approach: [
+        'Developed cross-platform mobile application using React Native and Expo',
+        'Engineered robust offline-first architecture using AsyncStorage for local data persistence',
+        'Designed intuitive UI/UX with smooth transitions and gesture controls',
+        'Implemented fast and reliable synchronization protocols for future cloud integration'
+      ],
+      metric: { value: 100, unit: '%', label: 'Offline capability with zero server dependency' },
+      year: '2024',
+      github: 'https://github.com/Subhadeep12-gorain/NoteApp',
+      demo: null
+    }
+  };
   const [themeHue] = useState(() => {
     const APPROVED_HUES = [170, 195, 220, 250, 275, 25, 45];
     return APPROVED_HUES[Math.floor(Math.random() * APPROVED_HUES.length)];
@@ -384,10 +470,10 @@ function App() {
       <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-hidden w-full max-w-[100vw]">
       
       {/* ====== Global Background Weather ====== */}
-      <GlobalWeatherManager />
+      {!lowPowerMode && <GlobalWeatherManager />}
 
       {/* ====== Custom Cursor ====== */}
-      <CustomCursor />
+      <CustomCursor lowPowerMode={lowPowerMode} />
 
       {/* ====== Section Dot Navigation (right side) ====== */}
       <SectionNav />
@@ -425,13 +511,22 @@ function App() {
           <li onClick={() => scrollToSection('skills')} className="cursor-pointer hover:text-primary transition-colors duration-300">{t('nav.skills')}</li>
           <li onClick={() => scrollToSection('contact')} className="cursor-pointer hover:text-primary transition-colors duration-300">{t('nav.contact', 'Contact')}</li>
         </ul>
-        <div 
-          onClick={toggleLanguage}
-          className="cursor-pointer text-xs flex items-center gap-1 hover:text-primary transition-colors duration-300 ml-2 border-l border-white/10 pl-4"
-        >
-          <span className={`transition-opacity duration-300 ${i18n.language === 'en' ? 'text-white' : 'text-white/40'}`}>EN</span>
-          <span className="text-white/20">/</span>
-          <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>日本語</span>
+        <div className="flex items-center gap-1 border-l border-white/10 pl-4 ml-2">
+          <div 
+            onClick={toggleLanguage}
+            className="cursor-pointer text-xs flex items-center gap-1 hover:text-primary transition-colors duration-300"
+          >
+            <span className={`transition-opacity duration-300 ${i18n.language === 'en' ? 'text-white' : 'text-white/40'}`}>EN</span>
+            <span className="text-white/20">/</span>
+            <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>日本語</span>
+          </div>
+          <button 
+            onClick={toggleLowPowerMode}
+            className="ml-3 text-white/40 hover:text-primary transition-colors flex items-center justify-center p-1"
+            title={lowPowerMode ? "Enable Visual Effects" : "Enable Low Power Mode"}
+          >
+            <span className="material-symbols-outlined text-[16px]">{lowPowerMode ? 'battery_saver' : 'bolt'}</span>
+          </button>
         </div>
       </motion.nav>
 
@@ -474,14 +569,22 @@ function App() {
           )}
         </AnimatePresence>
 
-        <motion.div 
-          layout="position"
-          onClick={toggleLanguage}
-          className="cursor-pointer text-[9px] flex items-center gap-1 hover:text-primary transition-colors border-l border-white/10 pl-3 ml-auto flex-shrink-0"
-        >
-          <span className={`transition-opacity duration-300 ${i18n.language === 'en' ? 'text-white' : 'text-white/40'}`}>EN</span>
-          <span className="text-white/20">/</span>
-          <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>日本語</span>
+        <motion.div layout="position" className="flex items-center gap-1 border-l border-white/10 pl-3 ml-auto flex-shrink-0">
+          <div 
+            onClick={toggleLanguage}
+            className="cursor-pointer text-[9px] flex items-center gap-1 hover:text-primary transition-colors"
+          >
+            <span className={`transition-opacity duration-300 ${i18n.language === 'en' ? 'text-white' : 'text-white/40'}`}>EN</span>
+            <span className="text-white/20">/</span>
+            <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>日本語</span>
+          </div>
+          <button 
+            onClick={toggleLowPowerMode}
+            className="ml-2 text-white/40 hover:text-primary transition-colors flex items-center justify-center p-1"
+            title={lowPowerMode ? "Enable Visual Effects" : "Enable Low Power Mode"}
+          >
+            <span className="material-symbols-outlined text-[14px]">{lowPowerMode ? 'battery_saver' : 'bolt'}</span>
+          </button>
         </motion.div>
       </motion.nav>
 
@@ -540,22 +643,34 @@ function App() {
               />
 
               {/* CV Button */}
-              <motion.button
-                onClick={() => setIsCvExpanded(!isCvExpanded)}
+              <motion.div
                 initial={{ y: 30, opacity: 0, filter: 'blur(8px)' }}
                 animate={isTechMasteryInView ? { y: 0, opacity: 1, filter: 'blur(0px)' } : { y: 30, opacity: 0, filter: 'blur(8px)' }}
                 transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 1, 0.5, 1] }}
-                className="text-primary font-label-sm text-label-sm uppercase tracking-widest btn-glow-underline pb-1 inline-flex items-center gap-2 mb-8"
-                style={{ color: `hsl(${themeHue}, 80%, 72%)` }}
+                className="flex items-center gap-6 mb-8 flex-wrap"
               >
-                <span>{t('tech.viewCv')}</span>
-                <motion.span
-                  animate={{ rotate: isCvExpanded ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
+                <button
+                  onClick={() => setIsCvExpanded(!isCvExpanded)}
+                  className="text-primary font-label-sm text-label-sm uppercase tracking-widest btn-glow-underline pb-1 inline-flex items-center gap-2"
+                  style={{ color: `hsl(${themeHue}, 80%, 72%)` }}
                 >
-                  ▼
-                </motion.span>
-              </motion.button>
+                  <span>{t('tech.viewCv')}</span>
+                  <motion.span
+                    animate={{ rotate: isCvExpanded ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    ▼
+                  </motion.span>
+                </button>
+                <a 
+                  href="/final_cv_3.pdf" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/60 hover:text-white font-label-sm text-[10px] uppercase tracking-widest pb-1 inline-flex items-center gap-1 transition-colors border-b border-white/20 hover:border-white/60"
+                >
+                  Download PDF ↗
+                </a>
+              </motion.div>
 
               <AnimatePresence>
                 {isCvExpanded && (
@@ -580,7 +695,7 @@ function App() {
                         <span className="block font-label-sm text-[0.65rem] tracking-[0.2em] mb-3 uppercase"
                           style={{ color: `hsla(${themeHue}, 70%, 65%, 0.55)` }}>{t('cv.coreStack')}</span>
                         <div className="flex flex-wrap gap-2">
-                          {['Python', 'Pandas', 'Scikit-learn', 'XGBoost', 'CatBoost'].map((tech, i) => (
+                          {['Python', 'Pandas / NumPy', 'Scikit-learn', 'XGBoost / CatBoost', 'Node.js', 'React / React Native', 'MongoDB', 'SQL', 'Java', 'Power BI'].map((tech, i) => (
                             <span key={i} className="px-3 py-1 text-[11px] font-mono tracking-wide rounded-full"
                               style={{
                                 color: `hsla(${themeHue}, 80%, 78%, 0.92)`,
@@ -695,9 +810,8 @@ function App() {
                 >
               {/* ── Card 1: Japan Tourism Demand Forecasting ── */}
               <motion.a
-                href="https://github.com/Subhadeep12-gorain/japan-tourism-forecasting"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
+                onClick={(e) => handleProjectClick(e, projectData.japanTourism)}
                 initial={{ opacity: 0, x: cardDirs[0].x, y: cardDirs[0].y, scale: 0.9 }}
                 animate={isBentoInView
                   ? { opacity: 1, x: 0, y: 0, scale: 1 }
@@ -714,7 +828,7 @@ function App() {
                 <JapanMapVisual isHovered={hoveredBento === 1} />
                 <div className="absolute bottom-0 left-0 p-8 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.9) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {['Python', 'Pandas', 'XGBoost', 'Time-Series'].map(tag => (
+                    {['Streamlit', 'Python', 'Pandas', 'CatBoost'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
                         style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
                     ))}
@@ -729,11 +843,10 @@ function App() {
                 </div>
               </motion.a>
 
-              {/* ── Card 2: NoteApp (React Native) ── */}
+              {/* ── Card 2: AssessIQ ── */}
               <motion.a
-                href="https://github.com/Subhadeep12-gorain/NoteApp"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
+                onClick={(e) => handleProjectClick(e, projectData.assessIQ)}
                 initial={{ opacity: 0, x: cardDirs[1].x, y: cardDirs[1].y, scale: 0.9 }}
                 animate={isBentoInView
                   ? { opacity: 1, x: 0, y: 0, scale: 1 }
@@ -746,11 +859,11 @@ function App() {
                 style={{ zIndex: 1 }}
                 className="md:col-span-1 md:row-span-2 group relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 cursor-pointer block"
               >
-                {/* <PhoneAppVisual /> */}
-                <PhoneAppVisual isHovered={hoveredBento === 2} />
+                {/* <EcommerceVisual /> */}
+                <EcommerceVisual isHovered={hoveredBento === 2} />
                 <div className="absolute bottom-0 left-0 p-6 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-2">
-                    {['React Native', 'Expo', 'AsyncStorage'].map(tag => (
+                    {['React', 'Vite', 'Frontend'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
                         style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
                     ))}
@@ -765,11 +878,10 @@ function App() {
                 </div>
               </motion.a>
 
-              {/* ── Card 3: Ecommerce Platform ── */}
+              {/* ── Card 3: NoteApp ── */}
               <motion.a
-                href="https://github.com/Subhadeep12-gorain/Ecommerce-website-"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
+                onClick={(e) => handleProjectClick(e, projectData.noteApp)}
                 initial={{ opacity: 0, x: cardDirs[2].x, y: cardDirs[2].y, scale: 0.9 }}
                 animate={isBentoInView
                   ? { opacity: 1, x: 0, y: 0, scale: 1 }
@@ -782,11 +894,11 @@ function App() {
                 style={{ zIndex: 1 }}
                 className="md:col-span-1 md:row-span-1 group relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 cursor-pointer block"
               >
-                {/* <EcommerceVisual /> */}
-                <EcommerceVisual isHovered={hoveredBento === 3} />
+                {/* <PhoneAppVisual /> */}
+                <PhoneAppVisual isHovered={hoveredBento === 3} />
                 <div className="absolute bottom-0 left-0 p-6 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-2">
-                    {['Django', 'React', 'PostgreSQL'].map(tag => (
+                    {['React Native', 'Expo', 'AsyncStorage'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
                         style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
                     ))}
@@ -844,14 +956,14 @@ function App() {
                 >
                   {[...Array(2)].map((_, i) => (
                     <div key={i} className="flex gap-4">
-                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain/japan-tourism-forecasting" tags={['Python', 'Pandas', 'XGBoost', 'Time-Series']} title={t('projects.p1_title')} desc={t('projects.p1_desc')} themeHue={themeHue} t={t}>
+                      <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.japanTourism)} tags={['Streamlit', 'Python', 'Pandas', 'CatBoost']} title={t('projects.p1_title')} desc={t('projects.p1_desc')} themeHue={themeHue} t={t}>
                         <JapanMapVisual isHovered={true} />
                       </MobileProjectCard>
-                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain/NoteApp" tags={['React Native', 'Expo', 'AsyncStorage']} title={t('projects.p3_title')} desc={t('projects.p3_desc')} themeHue={themeHue} t={t}>
-                        <PhoneAppVisual isHovered={true} />
-                      </MobileProjectCard>
-                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain/Ecommerce-website-" tags={['Django', 'React', 'PostgreSQL']} title={t('projects.p2_title')} themeHue={themeHue} t={t}>
+                      <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.assessIQ)} tags={['React', 'Vite', 'Frontend']} title={t('projects.p3_title')} desc={t('projects.p3_desc')} themeHue={themeHue} t={t}>
                         <EcommerceVisual isHovered={true} />
+                      </MobileProjectCard>
+                      <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.noteApp)} tags={['React Native', 'Expo', 'AsyncStorage']} title={t('projects.p2_title')} themeHue={themeHue} t={t}>
+                        <PhoneAppVisual isHovered={true} />
                       </MobileProjectCard>
                       <MobileProjectCard href="https://github.com/Subhadeep12-gorain" title={t('projects.view_github')} desc={t('projects.github_activity')} themeHue={themeHue} t={t} github>
                         <GitHubHeatmapVisual />
@@ -1122,7 +1234,7 @@ function App() {
       {/* ====== SECTION 5: Skills ====== */}
       <div id="skills-wrapper" data-snap-section className="relative overflow-hidden bg-transparent min-h-fit w-full py-section-gap">
         {/* Particle constellation replaces LightRays per vision doc */}
-        <ParticleConstellation themeHue={themeHue} />
+        {!lowPowerMode && <ParticleConstellation themeHue={themeHue} />}
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4" style={{ position: 'relative', zIndex: 1 }}>
           {/* Skills & Tech Stack Section */}
           <section id="skills" className="w-full mb-section-gap relative">
@@ -1186,7 +1298,15 @@ function App() {
           </motion.button>
         )}
       </AnimatePresence>
-
+      
+      {/* ====== PROJECT MODAL ====== */}
+      <ProjectModal 
+        project={selectedProject} 
+        themeHue={themeHue} 
+        onClose={() => setSelectedProject(null)} 
+        lowPowerMode={lowPowerMode}
+      />
+      
       </div>
     </ReactLenis>
   );

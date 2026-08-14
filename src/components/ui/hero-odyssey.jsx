@@ -267,7 +267,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
             This avoids the CSS "transform creates containing block" bug.
         ──────────────────────────────────────────────────────────────────── */}
 
-        {/* Top-left: Machine Learning / XGBoost */}
+        {/* Top-left: Data Analytics / Power BI */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
@@ -277,11 +277,11 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={leftCtrl} variants={leftBadgeVariants} initial="visible">
-            <BadgeContent name="Machine Learning" value="XGBoost" floatDelay={0} />
+            <BadgeContent name="Data Analytics" value="Power BI" floatDelay={0} />
           </motion.div>
         </motion.div>
 
-        {/* Inner-left: Python / Scikit-learn */}
+        {/* Inner-left: Python / Full-Stack */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
@@ -291,11 +291,11 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={leftCtrl} variants={leftBadgeVariants} initial="visible">
-            <BadgeContent name="Python" value="Scikit-learn" floatDelay={1.2} />
+            <BadgeContent name="Python" value="Full-Stack" floatDelay={1.2} />
           </motion.div>
         </motion.div>
 
-        {/* Top-right: Data Engineering / Pandas */}
+        {/* Top-right: Data Science / Pandas & XGBoost */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
@@ -305,7 +305,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           style={{ overflow: 'visible' }}
         >
           <motion.div animate={rightCtrl} variants={rightBadgeVariants} initial="visible">
-            <BadgeContent name="Data Engineering" value="Pandas" floatDelay={2.4} />
+            <BadgeContent name="Data Science" value="Pandas / XGBoost" floatDelay={2.4} />
           </motion.div>
         </motion.div>
 
@@ -331,13 +331,24 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           style={{ transformOrigin: 'center bottom' }}
           className="relative z-30 flex flex-col items-center text-center max-w-4xl mx-auto mt-20"
         >
+          {/* Open to Work Badge */}
+          <motion.div
+            animate={labelCtrl}
+            variants={labelVariants}
+            initial="visible"
+            className="mb-6 px-4 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 backdrop-blur-sm flex items-center gap-2"
+          >
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-[10px] md:text-xs font-medium tracking-wider text-green-100 uppercase">Open to Opportunities</span>
+          </motion.div>
+
           {/* "Sakura Nocturne" label */}
           <motion.p
             animate={labelCtrl}
             variants={labelVariants}
             initial="visible"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-            className="mt-8 text-xs md:text-base tracking-[0.3em] uppercase text-[#d6c2c4]/40 italic mb-2"
+            className="text-xs md:text-base tracking-[0.3em] uppercase text-[#d6c2c4]/40 italic mb-2"
           >
             {t('hero.nocturne')}
           </motion.p>
@@ -358,7 +369,8 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
             initial={{ opacity: 0, y: 16, filter: 'blur(10px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 1.0, ease: [0.25, 1, 0.5, 1], delay: 0.55 }}
-            className="text-xl md:text-4xl pb-3 font-light min-h-[2rem] md:min-h-[3rem]"
+            className="text-xl md:text-4xl pb-3 font-light min-h-[2rem] md:min-h-[3rem] break-words whitespace-normal"
+            style={{ overflowWrap: 'anywhere' }}
           >
             <HeroTypewriter
               key={t('hero.subtitle')}

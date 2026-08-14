@@ -20,8 +20,9 @@ The application utilizes high-performance custom WebGL shaders, elegant 3D tilt 
 - **Creative WebGL:** Custom WebGL fragment/vertex shader canvas for interactive sakura tree growth & petal rendering
 - **Scroll Behavior:** Lenis (smooth inertial scrolling)
 - **Email System:** Web3Forms API integration
-- **Localization:** i18next (English & Japanese)
+- **Localization:** i18next (English & Japanese) with full technical context translation
 - **Icons:** Lucide React & inline custom SVGs
+- **Performance:** Vite Rollup Chunking, Font Preloading, and Low Power Mode API
 
 ---
 
@@ -50,6 +51,11 @@ The application utilizes high-performance custom WebGL shaders, elegant 3D tilt 
 
 ### 6. Cinematic Video Footer
 - Implements a looping background video showing cherry blossoms falling over a Tokyo skyline at night with dark gradient blending.
+
+### 7. High-Performance Architecture & Low Power Mode 🔋
+- **Low Power Mode:** Automatically respects the user's OS "Reduced Motion" settings (and offers a manual toggle) to gracefully strip out heavy Canvas physics, particle systems, and glassmorphic blurs, ensuring maximum FPS on older smartphones and hardware.
+- **Network Optimized:** Implements aggressive Vite/Rollup chunk-splitting to ensure no initial JS payload exceeds 200kb, making the app blazing fast on 3G networks. 
+- **SEO Ready:** Implements automatic `hreflang` detection for localization indexing, along with static `sitemap.xml` and `robots.txt` endpoints.
 
 ---
 

@@ -461,8 +461,8 @@ const TreeCanvas = ({ themeHue = 220 }) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
   const [stripCount] = useState(() => {
-    if (typeof window === 'undefined') return 10;
-    return window.innerWidth < 768 ? 7 : 10;
+    if (typeof window === 'undefined') return 20;
+    return window.innerWidth < 768 ? 14 : 20;
   });
   const [phase, setPhase] = useState('tree'); // tree | strips | open | done
   const [snapshot, setSnapshot] = useState(null);
