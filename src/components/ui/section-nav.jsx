@@ -89,32 +89,33 @@ export function SectionNav() {
               )}
             </AnimatePresence>
 
-            {/* The dot */}
-            <motion.button
+            {/* The dot container (Accessibility Fix: 48x48 touch target) */}
+            <button
               onClick={() => handleClick(section)}
               aria-label={`Navigate to ${section.label}`}
-              animate={{
-                width:  isActive ? 10 : 6,
-                height: isActive ? 10 : 6,
-                backgroundColor: isActive
-                  ? 'rgba(251,179,193,0.95)'
-                  : isHovered
-                    ? 'rgba(251,179,193,0.55)'
-                    : 'rgba(255,255,255,0.22)',
-                boxShadow: isActive
-                  ? '0 0 10px rgba(251,179,193,0.6), 0 0 20px rgba(251,179,193,0.25)'
-                  : 'none',
-              }}
-              transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-              style={{
-                borderRadius: '50%',
-                border: 'none',
-                outline: 'none',
-                cursor: 'none',
-                flexShrink: 0,
-                display: 'block',
-              }}
-            />
+              className="flex items-center justify-center w-12 h-12 rounded-full cursor-none outline-none border-none bg-transparent"
+            >
+              <motion.div
+                animate={{
+                  width:  isActive ? 10 : 6,
+                  height: isActive ? 10 : 6,
+                  backgroundColor: isActive
+                    ? 'rgba(251,179,193,0.95)'
+                    : isHovered
+                      ? 'rgba(251,179,193,0.55)'
+                      : 'rgba(255,255,255,0.22)',
+                  boxShadow: isActive
+                    ? '0 0 10px rgba(251,179,193,0.6), 0 0 20px rgba(251,179,193,0.25)'
+                    : 'none',
+                }}
+                transition={{ type: 'spring', stiffness: 300, damping: 24 }}
+                style={{
+                  borderRadius: '50%',
+                  flexShrink: 0,
+                  display: 'block',
+                }}
+              />
+            </button>
           </div>
         );
       })}
