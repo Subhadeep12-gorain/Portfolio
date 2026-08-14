@@ -213,6 +213,14 @@ function App() {
       return next;
     });
   };
+
+  // Lighthouse Optimization: Defer heavy WebGL elements
+  const [deferredMount, setDeferredMount] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setDeferredMount(true), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const [selectedProject, setSelectedProject] = useState(null);
@@ -470,10 +478,10 @@ function App() {
       <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-hidden w-full max-w-[100vw]">
       
       {/* ====== Global Background Weather ====== */}
-      {!lowPowerMode && <GlobalWeatherManager />}
+      {!lowPowerMode && deferredMount && <GlobalWeatherManager />}
 
       {/* ====== Custom Cursor ====== */}
-      <CustomCursor lowPowerMode={lowPowerMode} />
+      {deferredMount && <CustomCursor lowPowerMode={lowPowerMode} />}
 
       {/* ====== Section Dot Navigation (right side) ====== */}
       <SectionNav />
@@ -748,11 +756,16 @@ function App() {
               transition={{ type: 'spring', stiffness: 65, damping: 18, delay: 0.85 }}
             >
               <div className="aspect-[3/4] rounded-lg overflow-hidden relative bloom-glow sakura-vignette">
-                <video
-                  ref={techVideoRef}
+                <motion.video
+                  onViewportEnter={(entry) => {
+                    if (entry?.target) entry.target.play().catch(()=>{});
+                  }}
                   loop
                   muted
                   playsInline
+                  preload="none"
+                  aria-hidden="true"
+                  title="Decorative Background Video"
                   className="w-full h-full object-cover"
                   src="/videos/15707984_1080_1920_30fps.mp4"
                 />

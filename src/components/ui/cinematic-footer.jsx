@@ -32,6 +32,7 @@ const socialLinks = [
 ];
 
 export function CinematicFooter() {
+  const videoRef = React.useRef(null);
   const prefersReducedMotion = useReducedMotion();
   // When reduced motion is preferred, skip all animations
   const getAnimationProps = (delay = 0) => {
@@ -51,16 +52,22 @@ export function CinematicFooter() {
     <footer className="relative w-full min-h-[35vh] flex items-center justify-center overflow-hidden">
       {/* ═══════ LAYER 0: Video Background ═══════ */}
       <motion.video
+        ref={videoRef}
         initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }}
         whileInView={prefersReducedMotion ? undefined : { opacity: 1 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, margin: "200px" }}
+        onViewportEnter={() => {
+          if (videoRef.current) videoRef.current.play().catch(() => {});
+        }}
         transition={{ duration: 1.5, ease: 'easeOut' }}
         className="absolute inset-0 w-full h-full object-cover"
         style={{ zIndex: 0 }}
-        autoPlay
         muted
         loop
         playsInline
+        preload="none"
+        aria-hidden="true"
+        title="Decorative Background Video"
       >
         <source src="/videos/footer-night-1.mp4" type="video/mp4" />
       </motion.video>
@@ -95,7 +102,7 @@ export function CinematicFooter() {
             className="text-sm md:text-base italic"
             style={{
               fontFamily: "'EB Garamond', serif",
-              color: 'rgba(251, 179, 193, 0.5)',
+              color: 'rgba(251, 179, 193, 0.75)',
             }}
           >
             Sakura Nocturne — AI/ML Engineering Portfolio
@@ -124,13 +131,13 @@ export function CinematicFooter() {
                 className="group relative text-sm tracking-[0.2em] uppercase cursor-pointer transition-colors duration-300"
                 style={{
                   fontFamily: "'Manrope', sans-serif",
-                  color: 'rgba(251, 179, 193, 0.6)',
+                  color: 'rgba(251, 179, 193, 0.85)',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = 'rgba(251, 179, 193, 1.0)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = 'rgba(251, 179, 193, 0.6)';
+                  e.currentTarget.style.color = 'rgba(251, 179, 193, 0.85)';
                 }}
               >
                 {link.label}
@@ -150,7 +157,7 @@ export function CinematicFooter() {
           className="text-xs text-center"
           style={{
             fontFamily: "'Manrope', sans-serif",
-            color: 'rgba(255, 255, 255, 0.25)',
+            color: 'rgba(255, 255, 255, 0.5)',
           }}
         >
           © 2026 Subhadeep Gorain. All rights reserved.
