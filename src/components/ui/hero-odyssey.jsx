@@ -126,7 +126,7 @@ const Lightning = ({ hue = 230, xOffset = 0, speed = 1, intensity = 1, size = 1 
       uSz=gl.getUniformLocation(prog,'uSize');
     const t0 = performance.now(); let raf;
     const render = () => {
-      resizeCanvas(); gl.viewport(0,0,canvas.width,canvas.height);
+      gl.viewport(0,0,canvas.width,canvas.height);
       gl.uniform2f(uR,canvas.width,canvas.height); gl.uniform1f(uT,(performance.now()-t0)/1000);
       gl.uniform1f(uH,hue); gl.uniform1f(uX,xOffset); gl.uniform1f(uSp,speed);
       gl.uniform1f(uIn,intensity); gl.uniform1f(uSz,size);

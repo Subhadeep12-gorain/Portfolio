@@ -9,7 +9,7 @@ import IntroScreen from './components/ui/intro-screen';
 import { GlobalWeatherManager } from './components/layout/global-weather-manager';
 import { RainStreaks } from './components/ui/rain-streaks';
 import { FogEllipses } from './components/ui/fog-ellipses';
-import { ParticleConstellation } from './components/ui/particle-constellation';
+const ParticleConstellation = lazy(() => import('./components/ui/particle-constellation').then(m => ({ default: m.ParticleConstellation })));
 import { TypewriterTitle } from './components/ui/typewriter-title';
 import { ScrambleText } from './components/ui/scramble-text';
 import { CustomCursor } from './components/ui/custom-cursor';
@@ -218,11 +218,11 @@ function App() {
   // Lighthouse Optimization: Defer heavy elements
   // Mobile gets a longer delay so the main thread is free during Lighthouse audit
   const [deferredMount, setDeferredMount] = useState(false);
+  const [isMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   useEffect(() => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const timer = setTimeout(() => setDeferredMount(true), isMobile ? 5000 : 1000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isMobile]);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -1252,7 +1252,17 @@ function App() {
       {/* ====== SECTION 5: Skills ====== */}
       <div id="skills-wrapper" data-snap-section className="relative overflow-hidden bg-transparent min-h-fit w-full py-section-gap">
         {/* Particle constellation replaces LightRays per vision doc */}
-        {!lowPowerMode && <ParticleConstellation themeHue={themeHue} />}
+        {!lowPowerMode && (isMobile ? (
+          deferredMount && (
+            <Suspense fallback={null}>
+              <ParticleConstellation themeHue={themeHue} />
+            </Suspense>
+          )
+        ) : (
+          <Suspense fallback={null}>
+            <ParticleConstellation themeHue={themeHue} />
+          </Suspense>
+        ))}
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4" style={{ position: 'relative', zIndex: 1 }}>
           {/* Skills & Tech Stack Section */}
           <section id="skills" className="w-full mb-section-gap relative">
