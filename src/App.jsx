@@ -225,14 +225,21 @@ function App() {
     });
   };
 
+  // Restore native cursor when low power mode is active (custom cursor returns null in LPM)
+  useEffect(() => {
+    document.body.style.cursor = lowPowerMode ? 'auto' : 'none';
+    return () => { document.body.style.cursor = ''; };
+  }, [lowPowerMode]);
+
   // Lighthouse Optimization: Defer heavy elements
-  // Mobile gets a longer delay so the main thread is free during Lighthouse audit
+  // Start AFTER intro completes so the heavy re-render never collides with the animation
   const [deferredMount, setDeferredMount] = useState(false);
   const [isMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   useEffect(() => {
-    const timer = setTimeout(() => setDeferredMount(true), isMobile ? 5000 : 1000);
+    if (!introDone) return;
+    const timer = setTimeout(() => setDeferredMount(true), isMobile ? 500 : 300);
     return () => clearTimeout(timer);
-  }, [isMobile]);
+  }, [introDone, isMobile]);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
