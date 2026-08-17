@@ -84,6 +84,8 @@ export function useSectionSnap({ freeScrollIds = [] } = {}) {
 
     // Wheel handler — accumulate delta, snap when threshold met
     const onWheel = (e) => {
+      // Touch devices fire wheel events for fling scroll — never intercept those
+      if (window.matchMedia('(hover: none)').matches) return;
       if (isSnapping.current) { e.preventDefault(); return; }
 
       // Check if the scroll is inside a free-scroll section

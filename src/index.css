@@ -109,7 +109,7 @@
 body {
   background-color: #111317;
   color: #e2e2e8;
-  overflow-x: hidden;
+  overflow-x: clip;
   scroll-behavior: smooth;
   cursor: none;
 }
