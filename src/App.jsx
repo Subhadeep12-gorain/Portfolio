@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ReactLenis, useLenis } from 'lenis/react';
+import { ReactLenis } from 'lenis/react';
 import { motion, AnimatePresence, useTransform, useMotionValue, useSpring, useInView, useMotionTemplate, useScroll, useMotionValueEvent } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { HeroSection } from './components/ui/hero-odyssey';
@@ -188,22 +188,6 @@ const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, git
       {content}
     </a>
   );
-};
-
-// Component to log scroll data to Eruda console (must be inside ReactLenis)
-const ScrollLogger = () => {
-  useLenis(({ scroll, limit, velocity }) => {
-    // Log every 50 pixels or so to prevent completely flooding the console
-    if (Math.round(scroll) % 50 === 0 || Math.abs(velocity) > 50) {
-      console.log(`SCROLL: ${Math.round(scroll)}px | MAX LIMIT: ${Math.round(limit)}px | VELOCITY: ${velocity.toFixed(2)}`);
-    }
-    
-    // Explicitly log if Lenis thinks we hit the absolute bottom
-    if (scroll >= limit && limit > 0) {
-      console.log(`[ALERT] Hit the bottom boundary at ${Math.round(limit)}px!`);
-    }
-  });
-  return null;
 };
 
 
@@ -505,7 +489,6 @@ function App() {
 
   return (
     <ReactLenis root>
-      <ScrollLogger />
       <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent">
       
       {/* ====== Global Background Weather ====== */}
