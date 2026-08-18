@@ -210,7 +210,7 @@ function App() {
   }, []);
 
   const [introDone, setIntroDone] = useState(false);
-  const [lowPowerMode, setLowPowerMode] = useState(() => {
+  const [lowPowerMode] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('lowPowerMode');
       return saved ? JSON.parse(saved) : window.matchMedia('(prefers-reduced-motion: reduce)').matches;
