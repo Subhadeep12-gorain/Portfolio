@@ -553,13 +553,6 @@ function App() {
             <span className="text-white/20">/</span>
             <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>日本語</span>
           </div>
-          <button 
-            onClick={toggleLowPowerMode}
-            className="ml-3 text-white/40 hover:text-primary transition-colors flex items-center justify-center p-1"
-            title={lowPowerMode ? "Enable Visual Effects" : "Enable Low Power Mode"}
-          >
-            <span className="material-symbols-outlined text-[16px]">{lowPowerMode ? 'battery_saver' : 'bolt'}</span>
-          </button>
         </div>
       </motion.nav>
 
@@ -611,13 +604,6 @@ function App() {
             <span className="text-white/20">/</span>
             <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>日本語</span>
           </div>
-          <button 
-            onClick={toggleLowPowerMode}
-            className="ml-2 text-white/40 hover:text-primary transition-colors flex items-center justify-center p-1"
-            title={lowPowerMode ? "Enable Visual Effects" : "Enable Low Power Mode"}
-          >
-            <span className="material-symbols-outlined text-[14px]">{lowPowerMode ? 'battery_saver' : 'bolt'}</span>
-          </button>
         </motion.div>
       </motion.nav>
 
