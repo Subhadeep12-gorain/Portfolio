@@ -219,13 +219,6 @@ function App() {
     return false;
   });
 
-  const toggleLowPowerMode = () => {
-    setLowPowerMode(prev => {
-      const next = !prev;
-      localStorage.setItem('lowPowerMode', JSON.stringify(next));
-      return next;
-    });
-  };
 
   // Lighthouse Optimization: Defer heavy elements
   // Start AFTER intro completes so the heavy re-render never collides with the animation
