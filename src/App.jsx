@@ -231,7 +231,7 @@ function App() {
   const [isMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   useEffect(() => {
     if (!introDone) return;
-    const timer = setTimeout(() => setDeferredMount(true), isMobile ? 500 : 300);
+    const timer = setTimeout(() => setDeferredMount(true), isMobile ? 200 : 300);
     return () => clearTimeout(timer);
   }, [introDone, isMobile]);
 
@@ -490,6 +490,22 @@ function App() {
       lenis.start();
     }
   }, [lenis, introDone]);
+
+  // FIX: Force Lenis to recalculate its boundaries whenever the DOM height changes.
+  // This catches the delayed components from deferredMount mounting later.
+  useEffect(() => {
+    if (!lenis) return;
+    
+    const resizeObserver = new ResizeObserver(() => {
+      lenis.resize(); // Tells Lenis the page just got taller
+    });
+    
+    resizeObserver.observe(document.body);
+    
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [lenis]);
 
   // firstvillage-style section snap (skip bento — it free-scrolls)
   useSectionSnap({ freeScrollIds: ['projects'] });
