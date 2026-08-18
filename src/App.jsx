@@ -506,7 +506,7 @@ function App() {
   return (
     <ReactLenis root>
       <ScrollLogger />
-      <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-hidden w-full max-w-[100vw]">
+      <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent">
       
       {/* ====== Global Background Weather ====== */}
       {!lowPowerMode && deferredMount && !isMobile && <GlobalWeatherManager />}
