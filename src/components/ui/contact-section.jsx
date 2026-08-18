@@ -239,7 +239,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
               border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)`
             }}
-            className="w-full backdrop-blur-md bg-white/[0.02] rounded-2xl p-8 md:p-10 relative overflow-hidden"
+            className="w-full aspect-square md:aspect-auto flex flex-col justify-center backdrop-blur-md bg-white/[0.02] rounded-2xl p-5 md:p-10 relative overflow-hidden"
           >
             {/* The Firefly Overlay that tracks the focused input */}
             <FireflyOverlay targetRect={focusedInputRect} themeHue={themeHue} />
@@ -280,14 +280,16 @@ export const ContactSection = ({ themeHue = 220 }) => {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   onFocus={(e) => {
                     handleFocus(e);
-                    e.target.style.borderBottomColor = `hsla(${themeHue}, 75%, 72%, 0.65)`;
+                    e.target.style.borderBottomColor = `hsl(${themeHue}, 75%, 72%)`;
+                    e.target.style.boxShadow = `0 4px 15px -3px hsla(${themeHue}, 75%, 72%, 0.4)`;
                   }}
                   onBlur={(e) => {
                     handleBlur();
                     e.target.style.borderBottomColor = `hsla(${themeHue}, 60%, 65%, 0.22)`;
+                    e.target.style.boxShadow = 'none';
                   }}
                   className="w-full bg-transparent border-0 border-b text-white font-body-md px-0 py-2 focus:outline-hidden focus:ring-0 transition-all duration-300 placeholder-white/20 text-base relative"
-                  style={{ borderBottomColor: `hsla(${themeHue}, 60%, 65%, 0.22)` }}
+                  style={{ borderBottomColor: `hsla(${themeHue}, 60%, 65%, 0.22)`, boxShadow: 'none' }}
                 />
               </motion.div>
 
@@ -310,14 +312,16 @@ export const ContactSection = ({ themeHue = 220 }) => {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   onFocus={(e) => {
                     handleFocus(e);
-                    e.target.style.borderBottomColor = `hsla(${themeHue}, 75%, 72%, 0.65)`;
+                    e.target.style.borderBottomColor = `hsl(${themeHue}, 75%, 72%)`;
+                    e.target.style.boxShadow = `0 4px 15px -3px hsla(${themeHue}, 75%, 72%, 0.4)`;
                   }}
                   onBlur={(e) => {
                     handleBlur();
                     e.target.style.borderBottomColor = `hsla(${themeHue}, 60%, 65%, 0.22)`;
+                    e.target.style.boxShadow = 'none';
                   }}
                   className="w-full bg-transparent border-0 border-b text-white font-body-md px-0 py-2 focus:outline-hidden focus:ring-0 transition-all duration-300 placeholder-white/20 text-base relative"
-                  style={{ borderBottomColor: `hsla(${themeHue}, 60%, 65%, 0.22)` }}
+                  style={{ borderBottomColor: `hsla(${themeHue}, 60%, 65%, 0.22)`, boxShadow: 'none' }}
                 />
               </motion.div>
 
@@ -340,14 +344,16 @@ export const ContactSection = ({ themeHue = 220 }) => {
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   onFocus={(e) => {
                     handleFocus(e);
-                    e.target.style.borderBottomColor = `hsla(${themeHue}, 75%, 72%, 0.65)`;
+                    e.target.style.borderBottomColor = `hsl(${themeHue}, 75%, 72%)`;
+                    e.target.style.boxShadow = `0 4px 15px -3px hsla(${themeHue}, 75%, 72%, 0.4)`;
                   }}
                   onBlur={(e) => {
                     handleBlur();
                     e.target.style.borderBottomColor = `hsla(${themeHue}, 60%, 65%, 0.22)`;
+                    e.target.style.boxShadow = 'none';
                   }}
                   className="w-full bg-transparent border-0 border-b text-white font-body-md px-0 py-2 focus:outline-hidden focus:ring-0 transition-all duration-300 placeholder-white/20 text-base resize-none relative"
-                  style={{ borderBottomColor: `hsla(${themeHue}, 60%, 65%, 0.22)` }}
+                  style={{ borderBottomColor: `hsla(${themeHue}, 60%, 65%, 0.22)`, boxShadow: 'none' }}
                 />
               </motion.div>
 

@@ -49,7 +49,7 @@ export function CinematicFooter() {
   };
 
   return (
-    <footer className="relative w-full min-h-[35vh] flex items-center justify-center overflow-hidden">
+    <footer className="relative w-full min-h-[25vh] md:min-h-[35vh] flex items-center justify-center overflow-hidden">
       {/* ═══════ LAYER 0: Video Background ═══════ */}
       <motion.video
         ref={videoRef}

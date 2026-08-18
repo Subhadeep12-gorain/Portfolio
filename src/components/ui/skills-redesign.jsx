@@ -75,8 +75,10 @@ export default function SkillsRedesign({ themeHue = 220 }) {
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
+    const x = (clientX - rect.left) / rect.width - 0.5;
+    const y = (clientY - rect.top) / rect.height - 0.5;
     mouseX.set(x);
     mouseY.set(y);
   };
@@ -314,9 +316,12 @@ export default function SkillsRedesign({ themeHue = 220 }) {
               style={{ perspective: 1000 }}
             >
               <motion.div
+                onTouchStart={handleMouseMove}
+                onTouchMove={handleMouseMove}
+                onTouchEnd={handleMouseLeaveCard}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeaveCard}
-                className="w-full rounded-2xl bg-[#050508]/80 backdrop-blur-3xl border p-10 md:p-14 flex flex-col relative overflow-hidden transition-colors duration-300"
+                className="w-full aspect-square md:aspect-auto justify-center rounded-2xl bg-[#050508]/80 backdrop-blur-3xl border p-6 md:p-14 flex flex-col relative overflow-hidden transition-colors duration-300"
                 style={{ 
                   borderColor: "rgba(255,255,255,0.08)",
                   borderTopColor: "rgba(255,255,255,0.15)",

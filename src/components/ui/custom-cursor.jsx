@@ -76,17 +76,14 @@ export function CustomCursor({ lowPowerMode = false }) {
           zIndex: 99999,
           pointerEvents: 'none',
           willChange: 'transform',
+          mixBlendMode: 'difference',
         }}
         animate={{
           opacity: isVisible ? 1 : 0,
           width: isExpanded ? 56 : 36,
           height: isExpanded ? 56 : 36,
-          borderColor: isExpanded
-            ? 'rgba(251, 179, 193, 0.7)'
-            : 'rgba(251, 179, 193, 0.4)',
-          backgroundColor: isExpanded
-            ? 'rgba(251, 179, 193, 0.06)'
-            : 'transparent',
+          borderColor: isExpanded ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.5)',
+          backgroundColor: 'transparent',
         }}
         transition={{
           opacity: { duration: 0.2 },
@@ -111,11 +108,11 @@ export function CustomCursor({ lowPowerMode = false }) {
           zIndex: 99999,
           pointerEvents: 'none',
           willChange: 'transform',
-          width: 7,
-          height: 7,
+          width: 8,
+          height: 8,
           borderRadius: '50%',
-          backgroundColor: 'rgba(251, 179, 193, 0.9)',
-          boxShadow: '0 0 8px rgba(251, 179, 193, 0.6)',
+          backgroundColor: 'white',
+          mixBlendMode: 'difference',
         }}
         animate={{ opacity: isVisible ? 1 : 0 }}
         transition={{ duration: 0.15 }}

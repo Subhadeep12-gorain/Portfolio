@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { LiquidButton } from './liquid-button';
 import { SplitHeading } from './split-heading';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -119,7 +120,7 @@ const Lightning = ({ hue = 230, xOffset = 0, speed = 1, intensity = 1, size = 1 
     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
     const ap = gl.getAttribLocation(prog, 'aPosition');
-    gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(ap); gl.enableVertexAttribArray(ap); gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
     const uR=gl.getUniformLocation(prog,'iResolution'), uT=gl.getUniformLocation(prog,'iTime'),
       uH=gl.getUniformLocation(prog,'uHue'), uX=gl.getUniformLocation(prog,'uXOffset'),
       uSp=gl.getUniformLocation(prog,'uSpeed'), uIn=gl.getUniformLocation(prog,'uIntensity'),
@@ -194,9 +195,6 @@ const entryVariants = {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HeroSection
-// Self-contained: uses IntersectionObserver to detect hero visibility.
-// When hero scrolls out of view (scrolling down) → triggers exit animation.
-// When hero scrolls back into view (scrolling up) → triggers enter animation.
 // ─────────────────────────────────────────────────────────────────────────────
 export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
   const heroRef = useRef(null);
@@ -207,12 +205,10 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
   const nameCtrl  = useAnimation();
   const labelCtrl = useAnimation();
 
-  // Separate tracking for badges and name to trigger them at different scroll points
   const badgesInView = useRef(true);
   const nameInView = useRef(true);
 
   useEffect(() => {
-    // Fire entry animations on mount (once)
     leftCtrl.start('visible');
     rightCtrl.start('visible');
     nameCtrl.start('visible');
@@ -221,12 +217,9 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // Badges hit the navbar quickly
       const triggerBadges = 90;
-      // Name is lower down, hits the navbar later
       const triggerName = 250;
 
-      // ── Badges trigger ──
       if (window.scrollY > triggerBadges && badgesInView.current) {
         badgesInView.current = false;
         leftCtrl.start('hidden');
@@ -237,7 +230,6 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
         rightCtrl.start('visible');
       }
 
-      // ── Name & Subtitle trigger ──
       if (window.scrollY > triggerName && nameInView.current) {
         nameInView.current = false;
         labelCtrl.start('hidden');
@@ -250,24 +242,15 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Initial check in case of page reload halfway down
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [leftCtrl, rightCtrl, nameCtrl, labelCtrl]);
 
   return (
-    // Transparent bg so global background (lightning + tree atmosphere) shows through
     <div ref={heroRef} className="relative w-full bg-transparent text-white min-h-screen" style={{ overflow: 'visible' }}>
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 h-screen flex flex-col justify-center" style={{ overflow: 'visible' }}>
 
-        {/* ── Floating Badges ─────────────────────────────────────────────────
-            Pattern: outer motion.div = position:absolute (no transform)
-                     inner motion.div = animation controller (no position)
-            This avoids the CSS "transform creates containing block" bug.
-        ──────────────────────────────────────────────────────────────────── */}
-
-        {/* Top-left: Data Analytics / Power BI */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
@@ -281,7 +264,6 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           </motion.div>
         </motion.div>
 
-        {/* Inner-left: Python / Full-Stack */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
@@ -295,7 +277,6 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           </motion.div>
         </motion.div>
 
-        {/* Top-right: Data Science / Pandas & XGBoost */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
@@ -309,7 +290,6 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           </motion.div>
         </motion.div>
 
-        {/* Inner-right: JLPT N4 / Japan */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
@@ -323,7 +303,6 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           </motion.div>
         </motion.div>
 
-        {/* ── Main Hero Content ─────────────────────────────────────────────── */}
         <motion.div
           animate={nameCtrl}
           variants={nameVariants}
@@ -333,13 +312,16 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
         >
           {/* Open to Work Badge */}
           <motion.div
-            animate={labelCtrl}
-            variants={labelVariants}
-            initial="visible"
-            className="mb-6 px-4 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 backdrop-blur-sm flex items-center gap-2"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-8 inline-flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-5 md:py-2 rounded-full bg-green-500/10 border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.15)]"
           >
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-[10px] md:text-xs font-medium tracking-wider text-green-100 uppercase">Open to Opportunities</span>
+            <div className="relative flex items-center justify-center">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex size-1.5 md:size-2 rounded-full bg-green-500"></span>
+            </div>
+            <span className="text-[9px] md:text-xs font-medium tracking-wider text-green-100 uppercase">Open to Opportunities</span>
           </motion.div>
 
           {/* "Sakura Nocturne" label */}
@@ -393,17 +375,16 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           </motion.p>
 
           {/* Explore button */}
-          <motion.button
-            onClick={onExploreClick}
+          <motion.div
             animate={labelCtrl}
             variants={labelVariants}
             initial="visible"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="mt-8 px-8 py-3 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-colors border border-white/20 text-white font-medium cursor-pointer"
+            className="mt-8"
           >
-            {t('hero.explore')}
-          </motion.button>
+            <LiquidButton onClick={onExploreClick} themeHue={themeHue}>
+              {t('hero.explore')}
+            </LiquidButton>
+          </motion.div>
         </motion.div>
       </div>
 

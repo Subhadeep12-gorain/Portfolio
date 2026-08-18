@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReactLenis } from 'lenis/react';
-import { motion, AnimatePresence, useTransform, useMotionValue, useSpring, useInView, useMotionTemplate, useScroll, useMotionValueEvent } from 'framer-motion';
+import { motion, AnimatePresence, useSpring, useInView, useScroll, useMotionValueEvent, useTransform, useMotionValue } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { HeroSection } from './components/ui/hero-odyssey';
 import IntroScreen from './components/ui/intro-screen';
@@ -50,76 +50,6 @@ const bentoHover = {
   boxShadow: '0 0 40px rgba(251,179,193,0.28), 0 0 80px rgba(251,179,193,0.1)',
 };
 
-const MagneticCVCard = ({ children, className = "", themeHue, delay, style = {}, initialX = -30 }) => {
-  const cardRef = useRef(null);
-  const mouseX = useMotionValue(-1000);
-  const mouseY = useMotionValue(-1000);
-  const cardX = useMotionValue(0);
-  const cardY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(cardY, [-0.5, 0.5], [10, -10]), { damping: 20, stiffness: 150 });
-  const rotateY = useSpring(useTransform(cardX, [-0.5, 0.5], [-10, 10]), { damping: 20, stiffness: 150 });
-  
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
-    
-    mouseX.set(clientX - rect.left);
-    mouseY.set(clientY - rect.top);
-
-    const x = (clientX - rect.left) / rect.width - 0.5;
-    const y = (clientY - rect.top) / rect.height - 0.5;
-    cardX.set(x);
-    cardY.set(y);
-  };
-  
-  const handleMouseLeave = () => {
-    mouseX.set(-1000);
-    mouseY.set(-1000);
-    cardX.set(0);
-    cardY.set(0);
-  };
-
-  const background = useMotionTemplate`radial-gradient(circle 250px at ${mouseX}px ${mouseY}px, hsla(${themeHue}, 80%, 75%, 0.15), transparent)`;
-
-  return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, x: initialX }}
-      animate={{ opacity: 1, x: 0, transition: { delay, duration: 0.6, ease: 'easeOut' } }}
-      exit={{ opacity: 0, x: initialX, transition: { duration: 0.4, ease: 'easeIn' } }}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      onTouchStart={handleMouseMove}
-      onTouchMove={handleMouseMove}
-      onTouchEnd={handleMouseLeave}
-      className={`relative overflow-hidden rounded-2xl backdrop-blur-xl p-6 cursor-pointer ${className}`}
-      style={{ 
-        border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)`, 
-        background: '#0a0f19cc',
-        rotateX,
-        rotateY,
-        transformStyle: 'preserve-3d',
-        perspective: 1000,
-        ...style
-      }}
-    >
-      <motion.div 
-        className="absolute inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100"
-        style={{ background, opacity: useTransform(mouseX, [-1000, 0], [0, 1]) }}
-      />
-      <div className="relative z-10" style={{ transform: 'translateZ(20px)' }}>
-        {children}
-      </div>
-    </motion.div>
-  );
-};
-
-
 const aboutContainerVariants = {
   hidden: {},
   visible: {
@@ -152,20 +82,20 @@ const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, git
         </svg>
       )}
       {children}
-      <div className="absolute bottom-0 left-0 p-5 w-full z-10" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
+      <div className="absolute bottom-0 left-0 p-3.5 md:p-5 w-full z-10" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
         {tags && (
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex flex-wrap gap-1 md:gap-2 mb-1 md:mb-2">
             {tags.map(tag => (
-              <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
+              <span key={tag} className="px-2 py-0.5 text-[8px] md:text-[9px] font-mono tracking-wider rounded-full"
                 style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
             ))}
           </div>
         )}
-        <h4 className="font-body-lg text-body-lg" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>{title}</h4>
-        {desc && <p className="font-body-md text-body-md text-on-surface-variant mt-1 text-xs leading-relaxed">{desc}</p>}
-        <div className="mt-2">
-          <span className="font-label-sm text-[10px] tracking-wider flex items-center gap-1" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>
-            {github ? t('projects.github_activity') : t('projects.view_project')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
+        <h4 className="font-body-md md:font-body-lg text-body-md md:text-body-lg" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>{title}</h4>
+        {desc && <p className="font-body-sm md:font-body-md text-body-sm md:text-body-md text-on-surface-variant mt-1 text-[10px] md:text-xs leading-relaxed">{desc}</p>}
+        <div className="mt-1.5 md:mt-2">
+          <span className="font-label-sm text-[9px] md:text-[10px] tracking-wider flex items-center gap-1" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>
+            {github ? t('projects.github_activity') : t('projects.view_project')} <span className="material-symbols-outlined text-xs md:text-sm">arrow_forward</span>
           </span>
         </div>
       </div>
@@ -173,7 +103,8 @@ const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, git
   );
 
   const className = "relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 block flex-shrink-0 bg-gradient-to-br from-surface-container to-surface text-left";
-  const style = { width: '280px', height: '300px' };
+  // Responsive sizing via CSS classes instead of inline styles for max-width, keeping inline for base width
+  const style = { width: '220px', height: '240px' }; // Smaller base size for mobile
 
   if (onClick) {
     return (
@@ -354,7 +285,6 @@ function App() {
   const aboutSmoothY = useSpring(aboutMouseY, aboutSpringConfig);
 
   const [isAboutHovered, setIsAboutHovered] = useState(false);
-  const [isCvExpanded, setIsCvExpanded] = useState(false);
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -419,25 +349,6 @@ function App() {
   const kanji3Y = useTransform(aboutSmoothY, (y) => {
     const h = aboutRef.current?.offsetHeight || 800;
     return ((y / h) - 0.5) * 400;
-  });
-
-  // Main Content Parallax Offsets (moves in opposite direction of Kanji for 3D stereoscopic depth effect)
-  const contentX = useTransform(aboutSmoothX, (x) => {
-    const w = aboutRef.current?.offsetWidth || 1200;
-    return ((x / w) - 0.5) * 20;
-  });
-  const contentY = useTransform(aboutSmoothY, (y) => {
-    const h = aboutRef.current?.offsetHeight || 800;
-    return ((y / h) - 0.5) * 20;
-  });
-
-  const gridX = useTransform(aboutSmoothX, (x) => {
-    const w = aboutRef.current?.offsetWidth || 1200;
-    return ((x / w) - 0.5) * -150;
-  });
-  const gridY = useTransform(aboutSmoothY, (y) => {
-    const h = aboutRef.current?.offsetHeight || 800;
-    return ((y / h) - 0.5) * -150;
   });
 
   // Glassmorphic Card 3D Tilt Values
@@ -650,101 +561,32 @@ function App() {
                 className="font-body-md text-body-md text-on-surface-variant mb-6"
               />
 
-              {/* CV Button */}
               <motion.div
-                initial={{ y: 30, opacity: 0, filter: 'blur(8px)' }}
-                animate={isTechMasteryInView ? { y: 0, opacity: 1, filter: 'blur(0px)' } : { y: 30, opacity: 0, filter: 'blur(8px)' }}
-                transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 1, 0.5, 1] }}
-                className="flex items-center gap-6 mb-8 flex-wrap"
+                initial={{ opacity: 0, y: 15 }}
+                animate={isTechMasteryInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                transition={{ duration: 0.6, delay: 0.9, ease: "easeOut" }}
+                className="mt-6"
               >
-                <button
-                  onClick={() => setIsCvExpanded(!isCvExpanded)}
-                  className="text-primary font-label-sm text-label-sm uppercase tracking-widest btn-glow-underline pb-1 inline-flex items-center gap-2"
-                  style={{ color: `hsl(${themeHue}, 80%, 72%)` }}
-                >
-                  <span>{t('tech.viewCv')}</span>
-                  <motion.span
-                    animate={{ rotate: isCvExpanded ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    ▼
-                  </motion.span>
-                </button>
-                <a 
-                  href="/final_cv_3.pdf" 
-                  target="_blank" 
+                <a
+                  href="/final_cv_3.pdf"
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/60 hover:text-white font-label-sm text-[10px] uppercase tracking-widest pb-1 inline-flex items-center gap-1 transition-colors border-b border-white/20 hover:border-white/60"
+                  className="group inline-flex items-center gap-3 px-6 py-3 rounded-full border bg-white/[0.02] backdrop-blur-md transition-all duration-300 hover:bg-white/[0.08] hover:scale-105 cursor-pointer"
+                  style={{
+                    borderColor: `hsla(${themeHue}, 70%, 65%, 0.2)`,
+                    boxShadow: `0 4px 20px -5px hsla(${themeHue}, 70%, 65%, 0.1)`,
+                  }}
                 >
-                  Download PDF ↗
+                  <span className="font-label-sm tracking-[0.15em] text-xs" style={{ color: `hsl(${themeHue}, 80%, 80%)` }}>
+                    {t('tech.viewCv')}
+                  </span>
+                  <span className="material-symbols-outlined text-sm transition-transform duration-300 group-hover:translate-y-0.5" style={{ color: `hsl(${themeHue}, 80%, 80%)` }}>
+                    download
+                  </span>
                 </a>
               </motion.div>
 
-              <AnimatePresence>
-                {isCvExpanded && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                    animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
-                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="overflow-hidden"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
-
-                      {/* Education Card */}
-                      <MagneticCVCard themeHue={themeHue} delay={0.1} initialX={-40}>
-                        <span className="block font-label-sm text-[0.65rem] tracking-[0.2em] mb-3 uppercase"
-                          style={{ color: `hsla(${themeHue}, 70%, 65%, 0.55)` }}>{t('cv.education')}</span>
-                        <span className="font-serif text-[1.2rem] text-white">{t('cv.degree')}</span>
-                      </MagneticCVCard>
-
-                      {/* Core Stack Card */}
-                      <MagneticCVCard themeHue={themeHue} delay={0.2} initialX={40}>
-                        <span className="block font-label-sm text-[0.65rem] tracking-[0.2em] mb-3 uppercase"
-                          style={{ color: `hsla(${themeHue}, 70%, 65%, 0.55)` }}>{t('cv.coreStack')}</span>
-                        <div className="flex flex-wrap gap-2">
-                          {['Python', 'Pandas / NumPy', 'Scikit-learn', 'XGBoost / CatBoost', 'Node.js', 'React / React Native', 'MongoDB', 'SQL', 'Java', 'Power BI'].map((tech, i) => (
-                            <span key={i} className="px-3 py-1 text-[11px] font-mono tracking-wide rounded-full"
-                              style={{
-                                color: `hsla(${themeHue}, 80%, 78%, 0.92)`,
-                                background: `hsla(${themeHue}, 70%, 65%, 0.09)`,
-                                border: `1px solid hsla(${themeHue}, 70%, 65%, 0.22)`,
-                              }}>
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </MagneticCVCard>
-
-                      {/* Key Projects Card */}
-                      <MagneticCVCard className="md:col-span-2" themeHue={themeHue} delay={0.3} initialX={-40}>
-                        <span className="block font-label-sm text-[0.65rem] tracking-[0.2em] mb-4 uppercase"
-                          style={{ color: `hsla(${themeHue}, 70%, 65%, 0.55)` }}>{t('cv.keyProjects')}</span>
-                        <div className="flex flex-col md:flex-row gap-6">
-                          <div className="flex-1 pl-4" style={{ borderLeft: `2px solid hsla(${themeHue}, 70%, 65%, 0.35)` }}>
-                            <h4 className="font-serif text-[1.1rem] text-white">{t('cv.project1')}</h4>
-                          </div>
-                          <div className="flex-1 pl-4" style={{ borderLeft: `2px solid hsla(${themeHue}, 70%, 65%, 0.35)` }}>
-                            <h4 className="font-serif text-[1.1rem] text-white">{t('cv.project2')}</h4>
-                          </div>
-                        </div>
-                      </MagneticCVCard>
-
-                      {/* Summary Card */}
-                      <MagneticCVCard className="md:col-span-2" themeHue={themeHue} delay={0.4} initialX={40} style={{ background: `linear-gradient(135deg, hsla(${themeHue}, 60%, 55%, 0.07), #0a0f19cc)` }}>
-                        <span className="font-serif italic text-[1.25rem] relative z-10 tracking-wide"
-                          style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>
-                          {t('cv.summary')}
-                        </span>
-                      </MagneticCVCard>
-
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* ── Right column — video panel ────────────────────────── */}
+            </div>            {/* ── Right column — video panel ────────────────────────── */}
             <motion.div
               className="md:col-span-5 md:col-start-8 relative mt-12 md:mt-0"
               initial={{ x: 80, opacity: 0, filter: 'blur(12px)' }}
@@ -755,7 +597,7 @@ function App() {
               }
               transition={{ type: 'spring', stiffness: 65, damping: 18, delay: 0.85 }}
             >
-              <div className="aspect-[3/4] rounded-lg overflow-hidden relative bloom-glow sakura-vignette">
+              <div className="aspect-square w-3/4 mx-auto md:w-full md:aspect-[3/4] rounded-lg overflow-hidden relative bloom-glow sakura-vignette group cursor-pointer">
                 <motion.video
                   onViewportEnter={(entry) => {
                     if (entry?.target) entry.target.play().catch(()=>{});
@@ -766,7 +608,7 @@ function App() {
                   preload="none"
                   aria-hidden="true"
                   title="Decorative Background Video"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:brightness-110"
                   src="/videos/15707984_1080_1920_30fps.mp4"
                 />
                 {isTechMasteryInView && (
@@ -1042,8 +884,6 @@ function App() {
                 style={{
                   backgroundImage: `radial-gradient(circle, hsla(${themeHue}, 70%, 65%, 0.055) 1px, transparent 1px)`,
                   backgroundSize: '60px 60px',
-                  x: gridX,
-                  y: gridY,
                 }}
               />
             </div>
@@ -1142,10 +982,14 @@ function App() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: false, margin: '-80px' }}
-            style={{ x: contentX, y: contentY }}
             className="relative z-20 w-full max-w-3xl flex flex-col items-center text-center px-6"
           >
-            <div className="flex flex-col items-center w-full py-10 relative">
+            <motion.div 
+              animate={{ y: [-15, 15, -15] }} 
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="w-full flex flex-col items-center"
+            >
+              <div className="flex flex-col items-center w-full py-10 relative">
               <motion.span
                 variants={aboutItemVariants}
                 className="text-[0.65rem] tracking-[0.2em] uppercase mb-3 text-center"
@@ -1241,6 +1085,7 @@ function App() {
                   </span>
                 </div>
               </motion.div>
+            </motion.div>
             </motion.div>
           </motion.div>
         </section>
