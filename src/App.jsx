@@ -493,8 +493,9 @@ function App() {
 
   // FIX: Force Lenis to recalculate its boundaries whenever the DOM height changes.
   // This catches the delayed components from deferredMount mounting later.
+  // (Only applies on Desktop, as Lenis is disabled on mobile)
   useEffect(() => {
-    if (!lenis) return;
+    if (!lenis || isMobile) return;
     
     const resizeObserver = new ResizeObserver(() => {
       lenis.resize(); // Tells Lenis the page just got taller
@@ -505,17 +506,21 @@ function App() {
     return () => {
       resizeObserver.disconnect();
     };
-  }, [lenis]);
+  }, [lenis, isMobile]);
 
   // firstvillage-style section snap (skip bento — it free-scrolls)
   useSectionSnap({ freeScrollIds: ['projects'] });
 
+  const ConditionalLenis = ({ children, isMobile }) => (
+    isMobile ? <>{children}</> : <ReactLenis root>{children}</ReactLenis>
+  );
+
   return (
-    <ReactLenis root>
-      <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-hidden w-full max-w-[100vw]">
+    <ConditionalLenis isMobile={isMobile}>
+      <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-clip w-full max-w-[100vw]">
       
       {/* ====== Global Background Weather ====== */}
-      {!lowPowerMode && deferredMount && <GlobalWeatherManager />}
+      {!lowPowerMode && deferredMount && !isMobile && <GlobalWeatherManager />}
 
       {/* ====== Custom Cursor (desktop only — no pointer on mobile) ====== */}
       {deferredMount && !isMobile && <CustomCursor lowPowerMode={lowPowerMode} />}
@@ -646,7 +651,7 @@ function App() {
           animate={isTechMasteryInView ? { opacity: 0.15 } : { opacity: 0 }}
           transition={{ duration: 1.4, ease: 'easeInOut' }}
         >
-          {isTechMasteryInView && (
+          {isTechMasteryInView && !isMobile && (
             <Suspense fallback={null}>
               <RainStreaks />
             </Suspense>
@@ -1045,7 +1050,7 @@ function App() {
         {/* BACKGROUND LAYER (Absolute to fill full section on all devices) */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
           <div className="relative h-full w-full overflow-hidden">
-            <FogEllipses />
+            {!isMobile && <FogEllipses />}
 
             {/* Katakana name watermark — bottom-left, ghost */}
             <div
@@ -1286,17 +1291,11 @@ function App() {
       {/* ====== SECTION 5: Skills ====== */}
       <div id="skills-wrapper" data-snap-section className="relative overflow-hidden bg-transparent min-h-fit w-full py-section-gap">
         {/* Particle constellation replaces LightRays per vision doc */}
-        {!lowPowerMode && (isMobile ? (
-          deferredMount && (
-            <Suspense fallback={null}>
-              <ParticleConstellation themeHue={themeHue} />
-            </Suspense>
-          )
-        ) : (
+        {!lowPowerMode && !isMobile && (
           <Suspense fallback={null}>
             <ParticleConstellation themeHue={themeHue} />
           </Suspense>
-        ))}
+        )}
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4" style={{ position: 'relative', zIndex: 1 }}>
           {/* Skills & Tech Stack Section */}
           <section id="skills" className="w-full mb-section-gap relative">
@@ -1380,7 +1379,7 @@ function App() {
       />
       
       </div>
-    </ReactLenis>
+    </ConditionalLenis>
   );
 }
 
