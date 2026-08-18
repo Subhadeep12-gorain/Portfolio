@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSectionSnap } from './hooks/use-section-snap';
-import { ReactLenis } from 'lenis/react';
+import { ReactLenis, useLenis } from 'lenis/react';
 import { motion, AnimatePresence, useTransform, useMotionValue, useSpring, useInView, useMotionTemplate, useScroll, useMotionValueEvent } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { HeroSection } from './components/ui/hero-odyssey';
@@ -225,12 +225,6 @@ function App() {
     });
   };
 
-  // Restore native cursor when low power mode is active (custom cursor returns null in LPM)
-  useEffect(() => {
-    document.body.style.cursor = lowPowerMode ? 'auto' : 'none';
-    return () => { document.body.style.cursor = ''; };
-  }, [lowPowerMode]);
-
   // Lighthouse Optimization: Defer heavy elements
   // Start AFTER intro completes so the heavy re-render never collides with the animation
   const [deferredMount, setDeferredMount] = useState(false);
@@ -240,6 +234,13 @@ function App() {
     const timer = setTimeout(() => setDeferredMount(true), isMobile ? 500 : 300);
     return () => clearTimeout(timer);
   }, [introDone, isMobile]);
+
+  // Restore native cursor when low power mode is active (desktop only — mobile has no cursor)
+  useEffect(() => {
+    if (isMobile) return;
+    document.body.style.cursor = lowPowerMode ? 'auto' : 'none';
+    return () => { document.body.style.cursor = ''; };
+  }, [lowPowerMode, isMobile]);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -478,17 +479,17 @@ function App() {
     }
   }, []);
 
-  // Lock scroll while intro is active to prevent scrolling past the hero
+  // Lock scroll while intro is active — use Lenis stop/start instead of body.style.overflow
+  // body.style.overflow = 'hidden' breaks Lenis's scroll-limit recalculation on mobile
+  const lenis = useLenis();
   useEffect(() => {
+    if (!lenis) return;
     if (!introDone) {
-      document.body.style.overflow = 'hidden';
+      lenis.stop();
     } else {
-      document.body.style.overflow = '';
+      lenis.start();
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [introDone]);
+  }, [lenis, introDone]);
 
   // firstvillage-style section snap (skip bento — it free-scrolls)
   useSectionSnap({ freeScrollIds: ['projects'] });
@@ -500,8 +501,8 @@ function App() {
       {/* ====== Global Background Weather ====== */}
       {!lowPowerMode && deferredMount && <GlobalWeatherManager />}
 
-      {/* ====== Custom Cursor ====== */}
-      {deferredMount && <CustomCursor lowPowerMode={lowPowerMode} />}
+      {/* ====== Custom Cursor (desktop only — no pointer on mobile) ====== */}
+      {deferredMount && !isMobile && <CustomCursor lowPowerMode={lowPowerMode} />}
 
       {/* ====== Section Dot Navigation (right side) ====== */}
       <SectionNav />

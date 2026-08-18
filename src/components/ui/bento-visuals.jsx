@@ -300,11 +300,8 @@ const heatmapData = generateHeatmapData(26, 7);
 
 export function GitHubHeatmapVisual() {
   return (
-    <a
-      href="https://github.com/Subhadeep12-gorain"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden gap-3 px-4 cursor-pointer hover:bg-white/5 transition-colors"
+    <div
+      className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden gap-3 px-4"
       style={{ background: 'transparent' }}
     >
       <h4 className="text-[9px] uppercase tracking-widest text-white/40 font-medium mb-1 z-10">GitHub Activity — @Subhadeep12-gorain</h4>
@@ -329,6 +326,6 @@ export function GitHubHeatmapVisual() {
           </div>
         ))}
       </div>
-    </a>
+    </div>
   );
 }
