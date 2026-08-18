@@ -231,11 +231,11 @@ function App() {
 
   // Lighthouse Optimization: Defer heavy elements
   // Start AFTER intro completes so the heavy re-render never collides with the animation
-  const [deferredMount, setDeferredMount] = useState(false);
   const [isMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
+  const [deferredMount, setDeferredMount] = useState(isMobile);
   useEffect(() => {
-    if (!introDone) return;
-    const timer = setTimeout(() => setDeferredMount(true), isMobile ? 200 : 300);
+    if (isMobile || !introDone) return;
+    const timer = setTimeout(() => setDeferredMount(true), 300);
     return () => clearTimeout(timer);
   }, [introDone, isMobile]);
 
@@ -517,7 +517,7 @@ function App() {
 
   return (
     <ConditionalLenis isMobile={isMobile}>
-      <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-clip w-full max-w-[100vw]">
+      <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-hidden w-full max-w-[100vw]">
       
       {/* ====== Global Background Weather ====== */}
       {!lowPowerMode && deferredMount && !isMobile && <GlobalWeatherManager />}

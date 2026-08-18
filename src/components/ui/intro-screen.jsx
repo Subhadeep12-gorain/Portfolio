@@ -153,8 +153,8 @@ const TreeCanvas = ({ themeHue = 220 }) => {
 
     // Use reduced complexity on mobile to free up main thread during load
     const isMobileDevice = window.innerWidth < 768;
-    const MAX_BRANCHES = isMobileDevice ? 300 : 2000;
-    const MAX_LEAVES = isMobileDevice ? 200 : 2000;
+    const MAX_BRANCHES = isMobileDevice ? 600 : 2000;
+    const MAX_LEAVES = isMobileDevice ? 400 : 2000;
 
     const branchPositions = new Float32Array(MAX_BRANCHES * 8);
     const branchIndices = new Uint16Array(MAX_BRANCHES * 6);
@@ -286,7 +286,7 @@ const TreeCanvas = ({ themeHue = 220 }) => {
     }
 
     function resizeCanvas() {
-      const dpr = isMobileDevice ? 1 : (window.devicePixelRatio || 1);
+      const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
       if (rect.width === 0 || rect.height === 0) return false;
       if (width !== rect.width || height !== rect.height) {
@@ -326,8 +326,7 @@ const TreeCanvas = ({ themeHue = 220 }) => {
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
 
-      // Force low resolution on mobile to save performance
-      const dpr = isMobileDevice ? 1 : (window.devicePixelRatio || 1);
+      const dpr = window.devicePixelRatio || 1;
 
       gl.enable(gl.BLEND);
       
