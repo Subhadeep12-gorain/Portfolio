@@ -191,9 +191,6 @@ const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, git
   );
 };
 
-const ConditionalLenis = ({ children, isMobile }) => (
-  isMobile ? <>{children}</> : <ReactLenis root>{children}</ReactLenis>
-);
 
 
 function App() {
@@ -502,7 +499,7 @@ function App() {
   useSectionSnap({ freeScrollIds: ['projects'] });
 
   return (
-    <ConditionalLenis isMobile={isMobile}>
+    <ReactLenis root>
       <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-hidden w-full max-w-[100vw]">
       
       {/* ====== Global Background Weather ====== */}
@@ -1365,7 +1362,7 @@ function App() {
       />
       
       </div>
-    </ConditionalLenis>
+    </ReactLenis>
   );
 }
 
