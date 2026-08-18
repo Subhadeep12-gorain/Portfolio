@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+﻿import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSectionSnap } from './hooks/use-section-snap';
 import { ReactLenis } from 'lenis/react';
@@ -9,16 +9,14 @@ import IntroScreen from './components/ui/intro-screen';
 import { GlobalWeatherManager } from './components/layout/global-weather-manager';
 import { RainStreaks } from './components/ui/rain-streaks';
 import { FogEllipses } from './components/ui/fog-ellipses';
-const ParticleConstellation = lazy(() => import('./components/ui/particle-constellation').then(m => ({ default: m.ParticleConstellation })));
+import { ParticleConstellation } from './components/ui/particle-constellation';
 import { TypewriterTitle } from './components/ui/typewriter-title';
 import { ScrambleText } from './components/ui/scramble-text';
 import { CustomCursor } from './components/ui/custom-cursor';
 import { SectionNav } from './components/ui/section-nav';
 import { SplitHeading } from './components/ui/split-heading';
-import { ProjectModal } from './components/ui/project-modal';
+import { ContactSection } from './components/ui/contact-section';
 import './index.css';
-
-const ContactSection = lazy(() => import('./components/ui/contact-section').then(m => ({ default: m.ContactSection })));
 
 const SkillsRedesign = lazy(() => import('./components/ui/skills-redesign'));
 const ExperienceTimeline = lazy(() => import('./components/ui/experience-timeline'));
@@ -144,9 +142,15 @@ const aboutItemVariants = {
 };
 
 
-const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, github = false, onClick }) => {
-  const content = (
-    <>
+const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, github = false }) => {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 block flex-shrink-0 bg-gradient-to-br from-surface-container to-surface"
+      style={{ width: '280px', height: '300px' }}
+    >
       {github && (
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
           <rect x="0.75" y="0.75" width="calc(100% - 1.5px)" height="calc(100% - 1.5px)" rx="8" ry="8" className="border-trace-rect" />
@@ -170,27 +174,9 @@ const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, git
           </span>
         </div>
       </div>
-    </>
-  );
-
-  const className = "relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 block flex-shrink-0 bg-gradient-to-br from-surface-container to-surface text-left";
-  const style = { width: '280px', height: '300px' };
-
-  if (onClick) {
-    return (
-      <button onClick={onClick} className={className} style={style}>
-        {content}
-      </button>
-    );
-  }
-
-  return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={className} style={style}>
-      {content}
     </a>
   );
 };
-
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -199,110 +185,8 @@ function App() {
     i18n.changeLanguage(i18n.language === 'en' ? 'jp' : 'en');
   };
 
-  // Load font CSS non-blocking after first paint so it never blocks render
-  useEffect(() => {
-    const load = () => import('./font-loader');
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(load);
-    } else {
-      setTimeout(load, 200);
-    }
-  }, []);
-
   const [introDone, setIntroDone] = useState(false);
-  const [lowPowerMode, setLowPowerMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('lowPowerMode');
-      return saved ? JSON.parse(saved) : window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    }
-    return false;
-  });
-
-  const toggleLowPowerMode = () => {
-    setLowPowerMode(prev => {
-      const next = !prev;
-      localStorage.setItem('lowPowerMode', JSON.stringify(next));
-      return next;
-    });
-  };
-
-  // Lighthouse Optimization: Defer heavy elements
-  // Start AFTER intro completes so the heavy re-render never collides with the animation
-  const [isMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
-  const [deferredMount, setDeferredMount] = useState(isMobile);
-  useEffect(() => {
-    if (isMobile || !introDone) return;
-    const timer = setTimeout(() => setDeferredMount(true), 300);
-    return () => clearTimeout(timer);
-  }, [introDone, isMobile]);
-
-  // Restore native cursor when low power mode is active (desktop only — mobile has no cursor)
-  useEffect(() => {
-    if (isMobile) return;
-    document.body.style.cursor = lowPowerMode ? 'auto' : 'none';
-    return () => { document.body.style.cursor = ''; };
-  }, [lowPowerMode, isMobile]);
-
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
-  const [selectedProject, setSelectedProject] = useState(null);
-  
-  const handleProjectClick = (e, projectData) => {
-    e.preventDefault();
-    setSelectedProject(projectData);
-  };
-  
-  // Data for the modals
-  const projectData = {
-    japanTourism: {
-      index: 1,
-      title: t('projects.p1_title'),
-      brief: t('projects.p1_desc'),
-      tags: ['Streamlit', 'Python', 'Pandas', 'CatBoost'],
-      approach: [
-        'Forecasts 19-year historical data (2008–2026) for all 47 prefectures with recursive chaining for post-2023 predictions',
-        'Visualizes prefecture-level trends with interactive charts showing actual vs. predicted overnight stays and seasonal patterns',
-        'Derives peak/no-peak classification using cross-validated 70th-percentile thresholds on per-prefecture predictions (2008–2023 train set)',
-        'Displays model performance metrics including Test RMSE (107,132) and comparative regression diagnostics across all regions'
-      ],
-      metric: { value: 47, unit: ' Prefectures', label: 'Real-time forecasting dashboard built and deployed' },
-      year: '2025',
-      github: 'https://github.com/Subhadeep12-gorain/japan-tourism_forecasting',
-      demo: 'https://japan-tourism-forecasting-dashboard.streamlit.app/'
-    },
-    assessIQ: {
-      index: 2,
-      title: t('projects.p3_title'),
-      brief: t('projects.p3_desc'),
-      tags: ['React', 'Vite', 'Frontend'],
-      approach: [
-        'Architected role-based dashboards tailored for Teachers, Students, Parents, and Admins',
-        'Implemented automated assessment delivery and seamless proctoring interfaces',
-        'Built comprehensive performance tracking and visualization components',
-        'Prepared infrastructure for upcoming AI model integration for question generation'
-      ],
-      metric: { value: 4, unit: ' Roles', label: 'Distinct user experiences delivered via single SPA' },
-      year: '2026',
-      github: 'https://github.com/Subhadeep12-gorain/AssessIQ',
-      demo: 'https://assessiq.vercel.app'
-    },
-    noteApp: {
-      index: 3,
-      title: t('projects.p2_title'),
-      brief: t('projects.p2_desc'),
-      tags: ['React Native', 'Expo', 'AsyncStorage'],
-      approach: [
-        'Developed cross-platform mobile application using React Native and Expo',
-        'Engineered robust offline-first architecture using AsyncStorage for local data persistence',
-        'Designed intuitive UI/UX with smooth transitions and gesture controls',
-        'Implemented fast and reliable synchronization protocols for future cloud integration'
-      ],
-      metric: { value: 100, unit: '%', label: 'Offline capability with zero server dependency' },
-      year: '2024',
-      github: 'https://github.com/Subhadeep12-gorain/NoteApp',
-      demo: null
-    }
-  };
   const [themeHue] = useState(() => {
     const APPROVED_HUES = [170, 195, 220, 250, 275, 25, 45];
     return APPROVED_HUES[Math.floor(Math.random() * APPROVED_HUES.length)];
@@ -403,20 +287,20 @@ function App() {
 
   // Kanji Parallax Offsets based on dynamic container dimensions (Dramatized Multipliers)
   const kanji1X = useTransform(aboutSmoothX, (x) => {
-    const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const w = aboutRef.current?.offsetWidth || 1200;
     return ((x / w) - 0.5) * -400;
   });
   const kanji1Y = useTransform(aboutSmoothY, (y) => {
-    const h = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const h = aboutRef.current?.offsetHeight || 800;
     return ((y / h) - 0.5) * -450;
   });
 
   const kanji2X = useTransform(aboutSmoothX, (x) => {
-    const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const w = aboutRef.current?.offsetWidth || 1200;
     return ((x / w) - 0.5) * 450;
   });
   const kanji2Y = useTransform(aboutSmoothY, (y) => {
-    const h = typeof window !== 'undefined' ? window.innerHeight : 800;
+    const h = aboutRef.current?.offsetHeight || 800;
     return ((y / h) - 0.5) * -350;
   });
 
@@ -480,8 +364,7 @@ function App() {
     }
   }, []);
 
-  // Lock scroll while intro is active using classic body.style.overflow
-  // This matches exactly the state of commit 9f80484 before the SEO changes.
+  // Lock scroll while intro is active to prevent scrolling past the hero
   useEffect(() => {
     if (!introDone) {
       document.body.style.overflow = 'hidden';
@@ -493,8 +376,7 @@ function App() {
     };
   }, [introDone]);
 
-
-  // firstvillage-style section snap (skip bento — it free-scrolls)
+  // firstvillage-style section snap (skip bento ΓÇö it free-scrolls)
   useSectionSnap({ freeScrollIds: ['projects'] });
 
   return (
@@ -502,10 +384,10 @@ function App() {
       <div className="antialiased selection:bg-primary-container selection:text-on-primary-container dark text-on-surface bg-transparent overflow-x-hidden w-full max-w-[100vw]">
       
       {/* ====== Global Background Weather ====== */}
-      {!lowPowerMode && deferredMount && !isMobile && <GlobalWeatherManager />}
+      <GlobalWeatherManager />
 
-      {/* ====== Custom Cursor (desktop only — no pointer on mobile) ====== */}
-      {deferredMount && !isMobile && <CustomCursor lowPowerMode={lowPowerMode} />}
+      {/* ====== Custom Cursor ====== */}
+      <CustomCursor />
 
       {/* ====== Section Dot Navigation (right side) ====== */}
       <SectionNav />
@@ -521,7 +403,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {/* ====== Top Navigation — floating pill style (fades and scales with landing page) ====== */}
+      {/* ====== Top Navigation ΓÇö floating pill style (fades and scales with landing page) ====== */}
       <motion.nav
         style={{
           opacity: introDone ? 1 : 0,
@@ -535,7 +417,7 @@ function App() {
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="font-serif text-xs tracking-[0.25em] text-primary uppercase cursor-pointer hover:opacity-80 transition-opacity"
         >
-          夜桜
+          σñ£µí£
         </div>
         <ul className="flex gap-6 font-label-sm text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/85">
           <li onClick={() => scrollToSection('projects')} className="cursor-pointer hover:text-primary transition-colors duration-300">{t('nav.projects')}</li>
@@ -543,22 +425,13 @@ function App() {
           <li onClick={() => scrollToSection('skills')} className="cursor-pointer hover:text-primary transition-colors duration-300">{t('nav.skills')}</li>
           <li onClick={() => scrollToSection('contact')} className="cursor-pointer hover:text-primary transition-colors duration-300">{t('nav.contact', 'Contact')}</li>
         </ul>
-        <div className="flex items-center gap-1 border-l border-white/10 pl-4 ml-2">
-          <div 
-            onClick={toggleLanguage}
-            className="cursor-pointer text-xs flex items-center gap-1 hover:text-primary transition-colors duration-300"
-          >
-            <span className={`transition-opacity duration-300 ${i18n.language === 'en' ? 'text-white' : 'text-white/40'}`}>EN</span>
-            <span className="text-white/20">/</span>
-            <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>日本語</span>
-          </div>
-          <button 
-            onClick={toggleLowPowerMode}
-            className="ml-3 text-white/40 hover:text-primary transition-colors flex items-center justify-center p-1"
-            title={lowPowerMode ? "Enable Visual Effects" : "Enable Low Power Mode"}
-          >
-            <span className="material-symbols-outlined text-[16px]">{lowPowerMode ? 'battery_saver' : 'bolt'}</span>
-          </button>
+        <div 
+          onClick={toggleLanguage}
+          className="cursor-pointer text-xs flex items-center gap-1 hover:text-primary transition-colors duration-300 ml-2 border-l border-white/10 pl-4"
+        >
+          <span className={`transition-opacity duration-300 ${i18n.language === 'en' ? 'text-white' : 'text-white/40'}`}>EN</span>
+          <span className="text-white/20">/</span>
+          <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>µùÑµ£¼Φ¬₧</span>
         </div>
       </motion.nav>
 
@@ -576,12 +449,12 @@ function App() {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="font-serif text-[11px] tracking-[0.2em] text-primary uppercase cursor-pointer flex-shrink-0 flex items-center gap-2"
         >
-          <span>夜桜</span>
+          <span>σñ£µí£</span>
           <motion.span 
             animate={{ rotate: isMobileMenuOpen ? 180 : 0 }} 
             className="text-[7px] text-white/40"
           >
-            ▼
+            Γû╝
           </motion.span>
         </motion.div>
 
@@ -601,22 +474,14 @@ function App() {
           )}
         </AnimatePresence>
 
-        <motion.div layout="position" className="flex items-center gap-1 border-l border-white/10 pl-3 ml-auto flex-shrink-0">
-          <div 
-            onClick={toggleLanguage}
-            className="cursor-pointer text-[9px] flex items-center gap-1 hover:text-primary transition-colors"
-          >
-            <span className={`transition-opacity duration-300 ${i18n.language === 'en' ? 'text-white' : 'text-white/40'}`}>EN</span>
-            <span className="text-white/20">/</span>
-            <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>日本語</span>
-          </div>
-          <button 
-            onClick={toggleLowPowerMode}
-            className="ml-2 text-white/40 hover:text-primary transition-colors flex items-center justify-center p-1"
-            title={lowPowerMode ? "Enable Visual Effects" : "Enable Low Power Mode"}
-          >
-            <span className="material-symbols-outlined text-[14px]">{lowPowerMode ? 'battery_saver' : 'bolt'}</span>
-          </button>
+        <motion.div 
+          layout="position"
+          onClick={toggleLanguage}
+          className="cursor-pointer text-[9px] flex items-center gap-1 hover:text-primary transition-colors border-l border-white/10 pl-3 ml-auto flex-shrink-0"
+        >
+          <span className={`transition-opacity duration-300 ${i18n.language === 'en' ? 'text-white' : 'text-white/40'}`}>EN</span>
+          <span className="text-white/20">/</span>
+          <span className={`font-serif transition-opacity duration-300 ${i18n.language === 'jp' ? 'text-white' : 'text-white/40'}`}>µùÑµ£¼Φ¬₧</span>
         </motion.div>
       </motion.nav>
 
@@ -627,13 +492,13 @@ function App() {
 
       {/* ====== SECTION 2: Technical Mastery / Introduction ====== */}
       <div id="mastery" data-snap-section ref={technicalMasteryRef} className="py-section-gap" style={{ position: 'relative', backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
-        {/* Rain Streaks — capped at 0.15 per vision doc */}
+        {/* Rain Streaks ΓÇö capped at 0.15 per vision doc */}
         <motion.div
           style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}
           animate={isTechMasteryInView ? { opacity: 0.15 } : { opacity: 0 }}
           transition={{ duration: 1.4, ease: 'easeInOut' }}
         >
-          {isTechMasteryInView && !isMobile && (
+          {isTechMasteryInView && (
             <Suspense fallback={null}>
               <RainStreaks />
             </Suspense>
@@ -644,12 +509,12 @@ function App() {
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)', zIndex: 1, pointerEvents: 'none' }} />
 
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4" style={{ position: 'relative', zIndex: 10 }}>
-          {/* Introduction Section — 12-col grid */}
+          {/* Introduction Section ΓÇö 12-col grid */}
           <section className="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
 
-            {/* ── Left column ──────────────────────────────────────── */}
+            {/* ΓöÇΓöÇ Left column ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             <div className="md:col-span-5 md:col-start-2">
-              {/* Title — left-aligned, blurs in when in view */}
+              {/* Title ΓÇö left-aligned, blurs in when in view */}
               <motion.div
                 initial={{ opacity: 0, y: 30, filter: 'blur(12px)' }}
                 animate={isTechMasteryInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 30, filter: 'blur(12px)' }}
@@ -658,7 +523,7 @@ function App() {
                 <TypewriterTitle speed={100} key={t('tech.title1')} />
               </motion.div>
 
-              {/* Paragraph 1 — ScrambleText */}
+              {/* Paragraph 1 ΓÇö ScrambleText */}
               <ScrambleText
                 text={t('tech.p1')}
                 trigger={isTechMasteryInView}
@@ -666,7 +531,7 @@ function App() {
                 className="font-body-md text-body-md text-on-surface-variant mb-4 mt-4"
               />
 
-              {/* Paragraph 2 — ScrambleText staggered */}
+              {/* Paragraph 2 ΓÇö ScrambleText staggered */}
               <ScrambleText
                 text={t('tech.p2')}
                 trigger={isTechMasteryInView}
@@ -675,34 +540,22 @@ function App() {
               />
 
               {/* CV Button */}
-              <motion.div
+              <motion.button
+                onClick={() => setIsCvExpanded(!isCvExpanded)}
                 initial={{ y: 30, opacity: 0, filter: 'blur(8px)' }}
                 animate={isTechMasteryInView ? { y: 0, opacity: 1, filter: 'blur(0px)' } : { y: 30, opacity: 0, filter: 'blur(8px)' }}
                 transition={{ duration: 0.8, delay: 1.0, ease: [0.25, 1, 0.5, 1] }}
-                className="flex items-center gap-6 mb-8 flex-wrap"
+                className="text-primary font-label-sm text-label-sm uppercase tracking-widest btn-glow-underline pb-1 inline-flex items-center gap-2 mb-8"
+                style={{ color: `hsl(${themeHue}, 80%, 72%)` }}
               >
-                <button
-                  onClick={() => setIsCvExpanded(!isCvExpanded)}
-                  className="text-primary font-label-sm text-label-sm uppercase tracking-widest btn-glow-underline pb-1 inline-flex items-center gap-2"
-                  style={{ color: `hsl(${themeHue}, 80%, 72%)` }}
+                <span>{t('tech.viewCv')}</span>
+                <motion.span
+                  animate={{ rotate: isCvExpanded ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <span>{t('tech.viewCv')}</span>
-                  <motion.span
-                    animate={{ rotate: isCvExpanded ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    ▼
-                  </motion.span>
-                </button>
-                <a 
-                  href="/final_cv_3.pdf" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-white/60 hover:text-white font-label-sm text-[10px] uppercase tracking-widest pb-1 inline-flex items-center gap-1 transition-colors border-b border-white/20 hover:border-white/60"
-                >
-                  Download PDF ↗
-                </a>
-              </motion.div>
+                  Γû╝
+                </motion.span>
+              </motion.button>
 
               <AnimatePresence>
                 {isCvExpanded && (
@@ -727,7 +580,7 @@ function App() {
                         <span className="block font-label-sm text-[0.65rem] tracking-[0.2em] mb-3 uppercase"
                           style={{ color: `hsla(${themeHue}, 70%, 65%, 0.55)` }}>{t('cv.coreStack')}</span>
                         <div className="flex flex-wrap gap-2">
-                          {['Python', 'Pandas / NumPy', 'Scikit-learn', 'XGBoost / CatBoost', 'Node.js', 'React / React Native', 'MongoDB', 'SQL', 'Java', 'Power BI'].map((tech, i) => (
+                          {['Python', 'Pandas', 'Scikit-learn', 'XGBoost', 'CatBoost'].map((tech, i) => (
                             <span key={i} className="px-3 py-1 text-[11px] font-mono tracking-wide rounded-full"
                               style={{
                                 color: `hsla(${themeHue}, 80%, 78%, 0.92)`,
@@ -768,7 +621,7 @@ function App() {
               </AnimatePresence>
             </div>
 
-            {/* ── Right column — video panel ────────────────────────── */}
+            {/* ΓöÇΓöÇ Right column ΓÇö video panel ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             <motion.div
               className="md:col-span-5 md:col-start-8 relative mt-12 md:mt-0"
               initial={{ x: 80, opacity: 0, filter: 'blur(12px)' }}
@@ -780,16 +633,11 @@ function App() {
               transition={{ type: 'spring', stiffness: 65, damping: 18, delay: 0.85 }}
             >
               <div className="aspect-[3/4] rounded-lg overflow-hidden relative bloom-glow sakura-vignette">
-                <motion.video
-                  onViewportEnter={(entry) => {
-                    if (entry?.target) entry.target.play().catch(()=>{});
-                  }}
+                <video
+                  ref={techVideoRef}
                   loop
                   muted
                   playsInline
-                  preload="none"
-                  aria-hidden="true"
-                  title="Decorative Background Video"
                   className="w-full h-full object-cover"
                   src="/videos/15707984_1080_1920_30fps.mp4"
                 />
@@ -807,7 +655,7 @@ function App() {
       </div>
 
       {/* ====== SECTION 3: Bento Projects ====== */}
-      {/* No snap — free scroll zone; snap resumes at next section */}
+      {/* No snap ΓÇö free scroll zone; snap resumes at next section */}
       <div id="bento-wrapper" style={{ position: 'relative', overflow: 'hidden', backgroundColor: 'transparent' }}>
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-section-gap">
           {/* Bento Gallery Grid */}
@@ -845,10 +693,11 @@ function App() {
                 <div
                   className="grid grid-cols-4 gap-6 auto-rows-[300px] relative z-10"
                 >
-              {/* ── Card 1: Japan Tourism Demand Forecasting ── */}
+              {/* ΓöÇΓöÇ Card 1: Japan Tourism Demand Forecasting ΓöÇΓöÇ */}
               <motion.a
-                href="#"
-                onClick={(e) => handleProjectClick(e, projectData.japanTourism)}
+                href="https://github.com/Subhadeep12-gorain/japan-tourism-forecasting"
+                target="_blank"
+                rel="noopener noreferrer"
                 initial={{ opacity: 0, x: cardDirs[0].x, y: cardDirs[0].y, scale: 0.9 }}
                 animate={isBentoInView
                   ? { opacity: 1, x: 0, y: 0, scale: 1 }
@@ -865,7 +714,7 @@ function App() {
                 <JapanMapVisual isHovered={hoveredBento === 1} />
                 <div className="absolute bottom-0 left-0 p-8 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.9) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {['Streamlit', 'Python', 'Pandas', 'CatBoost'].map(tag => (
+                    {['Python', 'Pandas', 'XGBoost', 'Time-Series'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
                         style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
                     ))}
@@ -880,10 +729,11 @@ function App() {
                 </div>
               </motion.a>
 
-              {/* ── Card 2: AssessIQ ── */}
+              {/* ΓöÇΓöÇ Card 2: NoteApp (React Native) ΓöÇΓöÇ */}
               <motion.a
-                href="#"
-                onClick={(e) => handleProjectClick(e, projectData.assessIQ)}
+                href="https://github.com/Subhadeep12-gorain/NoteApp"
+                target="_blank"
+                rel="noopener noreferrer"
                 initial={{ opacity: 0, x: cardDirs[1].x, y: cardDirs[1].y, scale: 0.9 }}
                 animate={isBentoInView
                   ? { opacity: 1, x: 0, y: 0, scale: 1 }
@@ -896,11 +746,11 @@ function App() {
                 style={{ zIndex: 1 }}
                 className="md:col-span-1 md:row-span-2 group relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 cursor-pointer block"
               >
-                {/* <EcommerceVisual /> */}
-                <EcommerceVisual isHovered={hoveredBento === 2} />
+                {/* <PhoneAppVisual /> */}
+                <PhoneAppVisual isHovered={hoveredBento === 2} />
                 <div className="absolute bottom-0 left-0 p-6 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-2">
-                    {['React', 'Vite', 'Frontend'].map(tag => (
+                    {['React Native', 'Expo', 'AsyncStorage'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
                         style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
                     ))}
@@ -915,10 +765,11 @@ function App() {
                 </div>
               </motion.a>
 
-              {/* ── Card 3: NoteApp ── */}
+              {/* ΓöÇΓöÇ Card 3: Ecommerce Platform ΓöÇΓöÇ */}
               <motion.a
-                href="#"
-                onClick={(e) => handleProjectClick(e, projectData.noteApp)}
+                href="https://github.com/Subhadeep12-gorain/Ecommerce-website-"
+                target="_blank"
+                rel="noopener noreferrer"
                 initial={{ opacity: 0, x: cardDirs[2].x, y: cardDirs[2].y, scale: 0.9 }}
                 animate={isBentoInView
                   ? { opacity: 1, x: 0, y: 0, scale: 1 }
@@ -931,11 +782,11 @@ function App() {
                 style={{ zIndex: 1 }}
                 className="md:col-span-1 md:row-span-1 group relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 cursor-pointer block"
               >
-                {/* <PhoneAppVisual /> */}
-                <PhoneAppVisual isHovered={hoveredBento === 3} />
+                {/* <EcommerceVisual /> */}
+                <EcommerceVisual isHovered={hoveredBento === 3} />
                 <div className="absolute bottom-0 left-0 p-6 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-2">
-                    {['React Native', 'Expo', 'AsyncStorage'].map(tag => (
+                    {['Django', 'React', 'PostgreSQL'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
                         style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
                     ))}
@@ -949,7 +800,7 @@ function App() {
                 </div>
               </motion.a>
 
-              {/* ── Card 4: GitHub Heatmap ── */}
+              {/* ΓöÇΓöÇ Card 4: GitHub Heatmap ΓöÇΓöÇ */}
               <motion.a
                 href="https://github.com/Subhadeep12-gorain"
                 target="_blank"
@@ -984,33 +835,31 @@ function App() {
 
             {/* Mobile Looping Marquee */}
             <div className="block md:hidden relative z-10 mt-4 w-full overflow-hidden" style={{ height: '300px' }}>
-              {deferredMount && (
-                <Suspense fallback={null}>
-                  <motion.div
-                    className="flex gap-4"
-                    animate={{ x: ["0%", "-50%"] }}
-                    transition={{ ease: "linear", duration: 25, repeat: Infinity }}
-                    style={{ width: "max-content" }}
-                  >
-                    {[...Array(2)].map((_, i) => (
-                      <div key={i} className="flex gap-4">
-                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.japanTourism)} tags={['Streamlit', 'Python', 'Pandas', 'CatBoost']} title={t('projects.p1_title')} desc={t('projects.p1_desc')} themeHue={themeHue} t={t}>
-                          <JapanMapVisual isHovered={true} />
-                        </MobileProjectCard>
-                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.assessIQ)} tags={['React', 'Vite', 'Frontend']} title={t('projects.p3_title')} desc={t('projects.p3_desc')} themeHue={themeHue} t={t}>
-                          <EcommerceVisual isHovered={true} />
-                        </MobileProjectCard>
-                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.noteApp)} tags={['React Native', 'Expo', 'AsyncStorage']} title={t('projects.p2_title')} themeHue={themeHue} t={t}>
-                          <PhoneAppVisual isHovered={true} />
-                        </MobileProjectCard>
-                        <MobileProjectCard href="https://github.com/Subhadeep12-gorain" title={t('projects.view_github')} desc={t('projects.github_activity')} themeHue={themeHue} t={t} github>
-                          <GitHubHeatmapVisual />
-                        </MobileProjectCard>
-                      </div>
-                    ))}
-                  </motion.div>
-                </Suspense>
-              )}
+              <Suspense fallback={null}>
+                <motion.div
+                  className="flex gap-4"
+                  animate={{ x: ["0%", "-50%"] }}
+                  transition={{ ease: "linear", duration: 25, repeat: Infinity }}
+                  style={{ width: "max-content" }}
+                >
+                  {[...Array(2)].map((_, i) => (
+                    <div key={i} className="flex gap-4">
+                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain/japan-tourism-forecasting" tags={['Python', 'Pandas', 'XGBoost', 'Time-Series']} title={t('projects.p1_title')} desc={t('projects.p1_desc')} themeHue={themeHue} t={t}>
+                        <JapanMapVisual isHovered={true} />
+                      </MobileProjectCard>
+                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain/NoteApp" tags={['React Native', 'Expo', 'AsyncStorage']} title={t('projects.p3_title')} desc={t('projects.p3_desc')} themeHue={themeHue} t={t}>
+                        <PhoneAppVisual isHovered={true} />
+                      </MobileProjectCard>
+                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain/Ecommerce-website-" tags={['Django', 'React', 'PostgreSQL']} title={t('projects.p2_title')} themeHue={themeHue} t={t}>
+                        <EcommerceVisual isHovered={true} />
+                      </MobileProjectCard>
+                      <MobileProjectCard href="https://github.com/Subhadeep12-gorain" title={t('projects.view_github')} desc={t('projects.github_activity')} themeHue={themeHue} t={t} github>
+                        <GitHubHeatmapVisual />
+                      </MobileProjectCard>
+                    </div>
+                  ))}
+                </motion.div>
+              </Suspense>
             </div>
           </section>
         </main>
@@ -1032,9 +881,9 @@ function App() {
         {/* BACKGROUND LAYER (Absolute to fill full section on all devices) */}
         <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
           <div className="relative h-full w-full overflow-hidden">
-            {!isMobile && <FogEllipses />}
+            <FogEllipses />
 
-            {/* Katakana name watermark — bottom-left, ghost */}
+            {/* Katakana name watermark ΓÇö bottom-left, ghost */}
             <div
               aria-hidden="true"
               style={{
@@ -1052,10 +901,10 @@ function App() {
                 whiteSpace: 'nowrap',
               }}
             >
-              スバディープ ゴレイン
+              πé╣πâÉπâçπéúπâ╝πâù πé┤πâ¼πéñπâ│
             </div>
 
-            {/* LAYER 1: Background Neural Grid — themeHue tinted */}
+            {/* LAYER 1: Background Neural Grid ΓÇö themeHue tinted */}
             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
               <motion.div
                 className="absolute inset-0 w-full h-[200%]"
@@ -1072,7 +921,7 @@ function App() {
               />
             </div>
 
-            {/* LAYER 1.5: Cursor Backlight Spotlight — themeHue */}
+            {/* LAYER 1.5: Cursor Backlight Spotlight ΓÇö themeHue */}
             <motion.div
               className="absolute w-[450px] h-[450px] rounded-full blur-[90px] pointer-events-none -translate-x-1/2 -translate-y-1/2 z-5 hidden md:block"
               style={{
@@ -1084,9 +933,9 @@ function App() {
               transition={{ duration: 0.4 }}
             />
 
-            {/* LAYER 2: Ghost Kanji — breath pulse + mouse parallax */}
+            {/* LAYER 2: Ghost Kanji ΓÇö breath pulse + mouse parallax */}
             <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden select-none font-serif">
-              {/* 工 Kanji */}
+              {/* σ╖Ñ Kanji */}
               <motion.div
                 animate={{
                   x: [0, -20], y: [0, -30],
@@ -1096,10 +945,10 @@ function App() {
                 transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', times: [0, 0.5, 1] }}
                 className="absolute left-[8%] bottom-[20%] text-[20vw] text-white leading-none"
               >
-                <motion.div style={{ x: kanji1X, y: kanji1Y }}>工</motion.div>
+                <motion.div style={{ x: kanji1X, y: kanji1Y }}>σ╖Ñ</motion.div>
               </motion.div>
 
-              {/* 房 Kanji */}
+              {/* µê┐ Kanji */}
               <motion.div
                 animate={{
                   x: [0, 15], y: [0, 20],
@@ -1109,10 +958,10 @@ function App() {
                 transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: 3.3, times: [0, 0.5, 1] }}
                 className="absolute right-[8%] top-[15%] text-[15vw] text-white leading-none"
               >
-                <motion.div style={{ x: kanji2X, y: kanji2Y }}>房</motion.div>
+                <motion.div style={{ x: kanji2X, y: kanji2Y }}>µê┐</motion.div>
               </motion.div>
 
-              {/* 脳 Kanji */}
+              {/* Φä│ Kanji */}
               <motion.div
                 animate={{
                   x: [0, -25], y: [0, 10],
@@ -1122,11 +971,11 @@ function App() {
                 transition={{ duration: 10, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut', delay: 6.6, times: [0, 0.5, 1] }}
                 className="absolute left-[50%] -translate-x-1/2 top-[8%] text-[12vw] text-white leading-none"
               >
-                <motion.div style={{ x: kanji3X, y: kanji3Y }}>脳</motion.div>
+                <motion.div style={{ x: kanji3X, y: kanji3Y }}>Φä│</motion.div>
               </motion.div>
             </div>
 
-            {/* LAYER 2.5: Atmospheric Bokeh Circles — themeHue */}
+            {/* LAYER 2.5: Atmospheric Bokeh Circles ΓÇö themeHue */}
             <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
               <div style={{
                 position: 'absolute', top: '10%', left: '-5%',
@@ -1232,7 +1081,7 @@ function App() {
               style={{ perspective: 1000 }}
               className="w-full max-w-lg"
             >
-              {/* Glassmorphic "Now Building" Card — themeHue border */}
+              {/* Glassmorphic "Now Building" Card ΓÇö themeHue border */}
               <motion.div
                 ref={cardRef}
                 onMouseMove={handleCardMouseMove}
@@ -1261,7 +1110,7 @@ function App() {
                     className="font-serif italic text-xl md:text-2xl text-white"
                     style={{ fontFamily: "'EB Garamond', serif" }}
                   >
-                    — {t('about.building_what')}
+                    ΓÇö {t('about.building_what')}
                   </span>
                 </div>
               </motion.div>
@@ -1273,19 +1122,13 @@ function App() {
       {/* ====== SECTION 5: Skills ====== */}
       <div id="skills-wrapper" data-snap-section className="relative overflow-hidden bg-transparent min-h-fit w-full py-section-gap">
         {/* Particle constellation replaces LightRays per vision doc */}
-        {!lowPowerMode && !isMobile && (
-          <Suspense fallback={null}>
-            <ParticleConstellation themeHue={themeHue} />
-          </Suspense>
-        )}
+        <ParticleConstellation themeHue={themeHue} />
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4" style={{ position: 'relative', zIndex: 1 }}>
           {/* Skills & Tech Stack Section */}
           <section id="skills" className="w-full mb-section-gap relative">
-            {deferredMount && (
-              <Suspense fallback={null}>
-                <SkillsRedesign themeHue={themeHue} />
-              </Suspense>
-            )}
+            <Suspense fallback={null}>
+              <SkillsRedesign themeHue={themeHue} />
+            </Suspense>
           </section>
         </main>
       </div>
@@ -1302,11 +1145,9 @@ function App() {
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4">
           {/* Experience / Timeline Section */}
           <section id="experience" className="w-full mb-section-gap relative">
-            {deferredMount && (
-              <Suspense fallback={null}>
-                <ExperienceTimeline themeHue={themeHue} />
-              </Suspense>
-            )}
+            <Suspense fallback={null}>
+              <ExperienceTimeline themeHue={themeHue} />
+            </Suspense>
           </section>
         </main>
       </div>
@@ -1314,23 +1155,17 @@ function App() {
       {/* ====== SECTION 7: Contact ====== */}
       <div id="contact-wrapper" data-snap-section className="py-section-gap" style={{ position: 'relative', overflow: 'hidden', backgroundColor: 'transparent' }}>
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4">
-          {deferredMount && (
-            <Suspense fallback={null}>
-              <ContactSection themeHue={themeHue} />
-            </Suspense>
-          )}
+          <ContactSection themeHue={themeHue} />
         </main>
       </div>
 
-      {/* ====== Gradient Bridge: Contact → Footer ====== */}
+      {/* ====== Gradient Bridge: Contact ΓåÆ Footer ====== */}
       <div style={{ width: '100%', height: 40, pointerEvents: 'none', position: 'relative', zIndex: 1, background: 'linear-gradient(to bottom, rgb(8,8,25), #000000)' }} />
 
       {/* ====== UPGRADED CINEMATIC FOOTER ====== */}
-      {deferredMount && (
-        <Suspense fallback={null}>
-          <CinematicFooter />
-        </Suspense>
-      )}
+      <Suspense fallback={null}>
+        <CinematicFooter />
+      </Suspense>
 
       {/* ====== SCROLL TO TOP BUTTON ====== */}
       <AnimatePresence>
@@ -1351,15 +1186,7 @@ function App() {
           </motion.button>
         )}
       </AnimatePresence>
-      
-      {/* ====== PROJECT MODAL ====== */}
-      <ProjectModal 
-        project={selectedProject} 
-        themeHue={themeHue} 
-        onClose={() => setSelectedProject(null)} 
-        lowPowerMode={lowPowerMode}
-      />
-      
+
       </div>
     </ReactLenis>
   );
