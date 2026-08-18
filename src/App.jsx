@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSectionSnap } from './hooks/use-section-snap';
 import { ReactLenis } from 'lenis/react';
 import { motion, AnimatePresence, useTransform, useMotionValue, useSpring, useInView, useMotionTemplate, useScroll, useMotionValueEvent } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
@@ -488,8 +487,6 @@ function App() {
   }, [introDone]);
 
 
-  // firstvillage-style section snap (skip bento — it free-scrolls)
-  useSectionSnap({ freeScrollIds: ['projects'] });
 
   return (
     <ReactLenis root>
