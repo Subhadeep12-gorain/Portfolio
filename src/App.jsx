@@ -191,6 +191,10 @@ const MobileProjectCard = ({ href, children, tags, title, desc, t, themeHue, git
   );
 };
 
+const ConditionalLenis = ({ children, isMobile }) => (
+  isMobile ? <>{children}</> : <ReactLenis root>{children}</ReactLenis>
+);
+
 function App() {
   const { t, i18n } = useTranslation();
 
@@ -510,10 +514,6 @@ function App() {
 
   // firstvillage-style section snap (skip bento — it free-scrolls)
   useSectionSnap({ freeScrollIds: ['projects'] });
-
-  const ConditionalLenis = ({ children, isMobile }) => (
-    isMobile ? <>{children}</> : <ReactLenis root>{children}</ReactLenis>
-  );
 
   return (
     <ConditionalLenis isMobile={isMobile}>
