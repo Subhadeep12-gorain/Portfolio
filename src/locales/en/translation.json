@@ -44,7 +44,7 @@
     "section_label": "SELECTED WORK",
     "title": "Technical Research & Projects",
     "p1_title": "Japan Tourism Forecasting & Analytics Dashboard",
-    "p1_desc": "Interactive Streamlit dashboard visualizing overnight stay predictions across 47 Japanese prefectures.",
+    "p1_desc": "Interactive Streamlit and Power BI dashboards visualizing overnight stay predictions across 47 Japanese prefectures.",
     "p2_title": "NoteApp",
     "p2_desc": "Cross-platform note-taking app built with React Native and local storage. Focused on seamless offline-first experience and fast synchronization.",
     "p3_title": "AssessIQ",

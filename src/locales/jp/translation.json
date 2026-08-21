@@ -43,8 +43,8 @@
   "projects": {
     "section_label": "SELECTED WORK",
     "title": "技術研究とプロジェクト",
-    "p1_title": "日本の観光予測ダッシュボード",
-    "p1_desc": "47都道府県の宿泊者数を予測するインタラクティブなStreamlitダッシュボード。",
+    "p1_title": "日本観光需要予測＆分析ダッシュボード",
+    "p1_desc": "47都道府県の宿泊者数を予測するインタラクティブなStreamlitおよびPower BIダッシュボード。",
     "p2_title": "NoteApp",
     "p2_desc": "React Native とローカルストレージで構築されたクロスプラットフォームのメモアプリ。",
     "p3_title": "AssessIQ",
