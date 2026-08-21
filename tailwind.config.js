@@ -71,13 +71,13 @@ export default {
                                 "unit": "8px"
                         },
                         "fontFamily": {
-                                "body-md": ["'Zen Kaku Gothic New'", "sans-serif"],
-                                "headline-lg-mobile": ["EB Garamond"],
-                                "headline-lg": ["EB Garamond"],
-                                "label-sm": ["'Zen Kaku Gothic New'", "sans-serif"],
-                                "headline-md": ["EB Garamond"],
-                                "body-lg": ["'Zen Kaku Gothic New'", "sans-serif"],
-                                "display-lg": ["EB Garamond"]
+                                "body-md": ["'Neue Metana Next'", "'Zen Kaku Gothic New'", "sans-serif"],
+                                "headline-lg-mobile": ["'Neue Metana Next'", "EB Garamond"],
+                                "headline-lg": ["'Neue Metana Next'", "EB Garamond"],
+                                "label-sm": ["'Neue Metana Next'", "'Zen Kaku Gothic New'", "sans-serif"],
+                                "headline-md": ["'Neue Metana Next'", "EB Garamond"],
+                                "body-lg": ["'Neue Metana Next'", "'Zen Kaku Gothic New'", "sans-serif"],
+                                "display-lg": ["'Neue Metana Next'", "EB Garamond"]
                         },
                         "fontSize": {
                                 "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
