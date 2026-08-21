@@ -294,7 +294,7 @@ export default function SkillsRedesign({ themeHue = 220 }) {
 
       {/* RIGHT PANEL: Stacked Cards Component */}
       <motion.div 
-        className="w-full md:w-[50%] min-h-[60vh] relative flex items-center justify-center z-10 px-6 md:px-0 md:pr-16 mt-16 md:mt-0"
+        className="w-full md:w-[50%] min-h-[60vh] relative flex items-center justify-center z-10 px-6 md:px-0 md:pr-16 mt-6 md:mt-0"
         initial={{ opacity: 0, y: cardYDir, rotateX: cardYDir > 0 ? 15 : -15 }}
         whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
         viewport={{ once: false, margin: "-100px" }}
@@ -321,11 +321,11 @@ export default function SkillsRedesign({ themeHue = 220 }) {
                 onTouchEnd={handleMouseLeaveCard}
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeaveCard}
-                className="w-full aspect-square md:aspect-auto justify-center rounded-2xl bg-[#050508]/80 backdrop-blur-3xl border p-6 md:p-14 flex flex-col relative overflow-hidden transition-colors duration-300"
+                className="w-full min-h-[420px] md:min-h-[auto] md:aspect-auto justify-center rounded-2xl bg-black/20 backdrop-blur-3xl border p-6 md:p-14 flex flex-col relative overflow-hidden transition-colors duration-300"
                 style={{ 
-                  borderColor: "rgba(255,255,255,0.08)",
-                  borderTopColor: "rgba(255,255,255,0.15)",
-                  boxShadow: "0 0 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                  borderColor: `hsla(${themeHue}, 40%, 50%, 0.2)`,
+                  boxShadow: `0 20px 60px -15px hsla(${themeHue}, 70%, 50%, 0.15), inset 0 0 20px hsla(${themeHue}, 70%, 50%, 0.05)`,
+                  transformStyle: "preserve-3d",
                   rotateX,
                   rotateY,
                 }}

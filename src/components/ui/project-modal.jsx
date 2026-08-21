@@ -312,6 +312,25 @@ export const ProjectModal = ({ project, themeHue, onClose, lowPowerMode = false 
                     <span className="material-symbols-outlined transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>arrow_outward</span>
                   </a>
                 )}
+                
+                {project.biDashboard && (
+                  <a 
+                    href={project.biDashboard} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex-1 p-6 rounded-xl border flex items-center justify-between group transition-all"
+                    style={{ 
+                      borderColor: `hsla(${themeHue}, 70%, 65%, 0.3)`, 
+                      background: `hsla(${themeHue}, 70%, 65%, 0.1)` 
+                    }}
+                  >
+                    <div>
+                      <h4 className="font-body-lg text-white text-lg mb-1">BI Dashboard</h4>
+                      <p className="font-label-sm text-xs text-white/60">View Power BI Report</p>
+                    </div>
+                    <span className="material-symbols-outlined transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>arrow_outward</span>
+                  </a>
+                )}
               </div>
             </motion.section>
             

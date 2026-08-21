@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import SplitHeading from './split-heading';
-import { MagneticButton } from './magnetic-button';
+import { LiquidButton } from './liquid-button';
 import { FireflyOverlay } from './firefly-overlay';
 import { Mail } from 'lucide-react';
 
@@ -196,12 +196,11 @@ export const ContactSection = ({ themeHue = 220 }) => {
               hidden: { opacity: 0, y: 10 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.8, delay: 1.8, ease: "easeOut" } }
             }}
-            className="font-sans text-base text-white/50 leading-relaxed max-w-sm mb-12"
+            className="font-sans text-base text-white/50 leading-relaxed max-w-sm mb-6 md:mb-12"
           >
             {t('contact.p1')}
           </motion.p>
 
-          {/* Magnetic Social Links */}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -209,9 +208,14 @@ export const ContactSection = ({ themeHue = 220 }) => {
             }}
             className="flex w-full justify-center lg:justify-start"
           >
-            <MagneticButton themeHue={themeHue} href="mailto:subhadeepgorain8@gmail.com" icon={Mail}>
+            <LiquidButton 
+              themeHue={themeHue} 
+              onClick={() => window.open('mailto:subhadeepgorain8@gmail.com')}
+              className="!rounded-[18px] gap-2"
+            >
+              <Mail size={16} />
               Email
-            </MagneticButton>
+            </LiquidButton>
           </motion.div>
 
         </motion.div>
@@ -229,7 +233,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
               transition: { duration: 0.9, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }
             }
           }}
-          className="lg:col-span-5 w-full relative z-20 lg:-ml-12 mt-12 lg:mt-0"
+          className="lg:col-span-5 w-full relative z-20 lg:-ml-12 mt-6 lg:mt-0"
         >
           {/* Glass Card */}
           <div
@@ -259,7 +263,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
                   }
                 }
               }}
-              className="flex flex-col gap-6 relative z-20 pointer-events-auto"
+              className="flex flex-col gap-4 relative z-20 pointer-events-auto"
             >
               {/* Field 1: Name */}
               <motion.div

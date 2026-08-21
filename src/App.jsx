@@ -181,17 +181,21 @@ function App() {
       index: 1,
       title: t('projects.p1_title'),
       brief: t('projects.p1_desc'),
-      tags: ['Streamlit', 'Python', 'Pandas', 'CatBoost'],
+      tags: ['Streamlit', 'Python', 'Pandas', 'CatBoost', 'Power BI'],
       approach: [
         'Forecasts 19-year historical data (2008–2026) for all 47 prefectures with recursive chaining for post-2023 predictions',
         'Visualizes prefecture-level trends with interactive charts showing actual vs. predicted overnight stays and seasonal patterns',
         'Derives peak/no-peak classification using cross-validated 70th-percentile thresholds on per-prefecture predictions (2008–2023 train set)',
-        'Displays model performance metrics including Test RMSE (107,132) and comparative regression diagnostics across all regions'
+        'Displays model performance metrics including Test RMSE (107,132) and comparative regression diagnostics across all regions',
+        'Built a business-facing Power BI dashboard with a Star schema data model, joining a fact table of monthly visitor counts to prefecture/date dimension tables',
+        'Designed dedicated dashboard pages for Historical Trends, Model Accuracy (RMSE/MAE on 2025–2026 holdout), and a Prefecture Seasonality drill-down page',
+        'Maintained data integrity by separating backtest accuracy from forward forecasts to clearly frame verified vs. unverified predictions'
       ],
       metric: { value: 47, unit: ' Prefectures', label: 'Real-time forecasting dashboard built and deployed' },
       year: '2025',
       github: 'https://github.com/Subhadeep12-gorain/japan-tourism_forecasting',
-      demo: 'https://japan-tourism-forecasting-dashboard.streamlit.app/'
+      demo: 'https://japan-tourism-forecasting-dashboard.streamlit.app/',
+      biDashboard: '/tourism_dashboard_BI.pdf'
     },
     assessIQ: {
       index: 2,
@@ -568,7 +572,7 @@ function App() {
                 className="mt-6"
               >
                 <a
-                  href="/final_cv_3.pdf"
+                  href="/Current_CV.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-3 px-6 py-3 rounded-full border bg-white/[0.02] backdrop-blur-md transition-all duration-300 hover:bg-white/[0.08] hover:scale-105 cursor-pointer"
@@ -1101,7 +1105,7 @@ function App() {
         )}
         <main className="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4" style={{ position: 'relative', zIndex: 1 }}>
           {/* Skills & Tech Stack Section */}
-          <section id="skills" className="w-full mb-section-gap relative">
+          <section id="skills" className="w-full mb-12 md:mb-section-gap relative">
             {deferredMount && (
               <Suspense fallback={null}>
                 <SkillsRedesign themeHue={themeHue} />
