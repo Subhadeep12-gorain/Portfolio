@@ -687,7 +687,7 @@ function App() {
                 <JapanMapVisual isHovered={hoveredBento === 1} />
                 <div className="absolute bottom-0 left-0 p-8 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.9) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {['Streamlit', 'Python', 'Pandas', 'CatBoost'].map(tag => (
+                    {['Streamlit', 'Python', 'Pandas', 'CatBoost', 'Power BI'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
                         style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
                     ))}
@@ -816,7 +816,7 @@ function App() {
                   >
                     {[...Array(2)].map((_, i) => (
                       <div key={i} className="flex gap-4">
-                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.japanTourism)} tags={['Streamlit', 'Python', 'Pandas', 'CatBoost']} title={t('projects.p1_title')} desc={t('projects.p1_desc')} themeHue={themeHue} t={t}>
+                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.japanTourism)} tags={['Streamlit', 'Python', 'Pandas', 'CatBoost', 'Power BI']} title={t('projects.p1_title')} desc={t('projects.p1_desc')} themeHue={themeHue} t={t}>
                           <JapanMapVisual isHovered={true} />
                         </MobileProjectCard>
                         <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.assessIQ)} tags={['React', 'Vite', 'Frontend']} title={t('projects.p3_title')} desc={t('projects.p3_desc')} themeHue={themeHue} t={t}>
