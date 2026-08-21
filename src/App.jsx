@@ -195,7 +195,8 @@ function App() {
       year: '2025',
       github: 'https://github.com/Subhadeep12-gorain/japan-tourism_forecasting',
       demo: 'https://japan-tourism-forecasting-dashboard.streamlit.app/',
-      biDashboard: '/tourism_dashboard_BI.pdf'
+      biDashboard: '/tourism_dashboard_BI.pdf',
+      biGithub: 'https://github.com/Subhadeep12-gorain/Japan_Tourism_BI_Dashboard'
     },
     assessIQ: {
       index: 2,
