@@ -573,7 +573,7 @@ function App() {
                 className="mt-6"
               >
                 <a
-                  href="/Current_CV.pdf"
+                  href="/Subhadeep_Gorain_Resume.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-3 px-6 py-3 rounded-full border bg-white/[0.02] backdrop-blur-md transition-all duration-300 hover:bg-white/[0.08] hover:scale-105 cursor-pointer"
