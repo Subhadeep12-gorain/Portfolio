@@ -154,8 +154,8 @@ input, textarea, select {
 }
 
 .py-section-gap {
-  padding-top: 24px;
-  padding-bottom: 24px;
+  padding-top: 72px;
+  padding-bottom: 36px;
 }
 @media (min-width: 768px) {
   .py-section-gap {

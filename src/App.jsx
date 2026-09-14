@@ -25,6 +25,7 @@ const CinematicFooter = lazy(() => import('./components/ui/cinematic-footer').th
 const TechOverlay = lazy(() => import('./components/ui/tech-overlay').then(m => ({ default: m.TechOverlay })));
 const JapanMapVisual = lazy(() => import('./components/ui/bento-visuals').then(m => ({ default: m.JapanMapVisual })));
 const PhoneAppVisual = lazy(() => import('./components/ui/bento-visuals').then(m => ({ default: m.PhoneAppVisual })));
+const SentimentAnalysisVisual = lazy(() => import('./components/ui/bento-visuals').then(m => ({ default: m.SentimentAnalysisVisual })));
 const EcommerceVisual = lazy(() => import('./components/ui/bento-visuals').then(m => ({ default: m.EcommerceVisual })));
 const GitHubHeatmapVisual = lazy(() => import('./components/ui/bento-visuals').then(m => ({ default: m.GitHubHeatmapVisual })));
 
@@ -214,20 +215,21 @@ function App() {
       github: 'https://github.com/Subhadeep12-gorain/AssessIQ',
       demo: 'https://assessiq.vercel.app'
     },
-    noteApp: {
+    sentimentAnalysis: {
       index: 3,
       title: t('projects.p2_title'),
       brief: t('projects.p2_desc'),
-      tags: ['React Native', 'Expo', 'AsyncStorage'],
+      tags: ['PyTorch', 'DistilBERT', 'Hugging Face', 'Scikit-Learn', 'NLP'],
       approach: [
-        'Developed cross-platform mobile application using React Native and Expo',
-        'Engineered robust offline-first architecture using AsyncStorage for local data persistence',
-        'Designed intuitive UI/UX with smooth transitions and gesture controls',
-        'Implemented fast and reliable synchronization protocols for future cloud integration'
+        'Built an end-to-end 3-class sentiment pipeline on 568k+ Amazon Fine Food reviews progressing from statistical baselines to fine-tuned Transformers',
+        'Implemented bigram TF-IDF with custom cost-sensitive class weights ({"negative": 2.0, "neutral": 3.0, "positive": 1.0}) to overcome 78% positive class imbalance',
+        'Engineered negation-aware preprocessing to preserve polarity modifiers ("not", "no", "never"), preventing semantic inversion',
+        'Fine-tuned DistilBERT with custom class-weighted cross-entropy loss, achieving 90% test accuracy and 0.74 macro F1',
+        'Conducted in-depth error analysis isolating the empirical neutral-class ceiling (~0.45–0.48 F1) caused by multi-attribute linguistic ambiguity'
       ],
-      metric: { value: 100, unit: '%', label: 'Offline capability with zero server dependency' },
-      year: '2024',
-      github: 'https://github.com/Subhadeep12-gorain/NoteApp',
+      metric: { value: 90, unit: '% Accuracy', label: 'Test accuracy achieved across 568k+ reviews via fine-tuned DistilBERT' },
+      year: '2025',
+      github: 'https://github.com/Subhadeep12-gorain/Sentiment-Analysis',
       demo: null
     }
   };
@@ -738,10 +740,10 @@ function App() {
                 </div>
               </motion.a>
 
-              {/* ── Card 3: NoteApp ── */}
+              {/* ── Card 3: NLP Sentiment Analysis ── */}
               <motion.a
                 href="#"
-                onClick={(e) => handleProjectClick(e, projectData.noteApp)}
+                onClick={(e) => handleProjectClick(e, projectData.sentimentAnalysis)}
                 initial={{ opacity: 0, x: cardDirs[2].x, y: cardDirs[2].y, scale: 0.9 }}
                 animate={isBentoInView
                   ? { opacity: 1, x: 0, y: 0, scale: 1 }
@@ -754,11 +756,10 @@ function App() {
                 style={{ zIndex: 1 }}
                 className="md:col-span-1 md:row-span-1 group relative overflow-hidden rounded-lg bg-surface-container-low border border-primary/10 cursor-pointer block"
               >
-                {/* <PhoneAppVisual /> */}
-                <PhoneAppVisual isHovered={hoveredBento === 3} />
+                <SentimentAnalysisVisual isHovered={hoveredBento === 3} />
                 <div className="absolute bottom-0 left-0 p-6 w-full z-10 transform translate-y-0 md:translate-y-4 group-hover:translate-y-0 transition-all duration-500" style={{ background: 'linear-gradient(to top, rgba(10,12,18,0.95) 0%, transparent 100%)' }}>
                   <div className="flex flex-wrap gap-2 mb-2">
-                    {['React Native', 'Expo', 'AsyncStorage'].map(tag => (
+                    {['PyTorch', 'DistilBERT', 'NLP'].map(tag => (
                       <span key={tag} className="px-2 py-0.5 text-[9px] font-mono tracking-wider rounded-full"
                         style={{ color: `hsla(${themeHue}, 75%, 72%, 0.85)`, background: `hsla(${themeHue}, 70%, 65%, 0.09)`, border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)` }}>{tag}</span>
                     ))}
@@ -823,8 +824,8 @@ function App() {
                         <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.assessIQ)} tags={['React', 'Vite', 'Frontend']} title={t('projects.p3_title')} desc={t('projects.p3_desc')} themeHue={themeHue} t={t}>
                           <EcommerceVisual isHovered={true} />
                         </MobileProjectCard>
-                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.noteApp)} tags={['React Native', 'Expo', 'AsyncStorage']} title={t('projects.p2_title')} themeHue={themeHue} t={t}>
-                          <PhoneAppVisual isHovered={true} />
+                        <MobileProjectCard onClick={(e) => handleProjectClick(e, projectData.sentimentAnalysis)} tags={['PyTorch', 'DistilBERT', 'NLP']} title={t('projects.p2_title')} themeHue={themeHue} t={t}>
+                          <SentimentAnalysisVisual isHovered={true} />
                         </MobileProjectCard>
                         <MobileProjectCard href="https://github.com/Subhadeep12-gorain" title={t('projects.view_github')} desc={t('projects.github_activity')} themeHue={themeHue} t={t} github>
                           <GitHubHeatmapVisual />

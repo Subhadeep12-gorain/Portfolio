@@ -196,6 +196,125 @@ export function PhoneAppVisual({ isHovered }) {
 }
 
 // ─────────────────────────────────────────────
+// CARD 3: NLP Sentiment Analysis — Transformer Token & Sentiment Vector Visual
+// ─────────────────────────────────────────────
+const SENTIMENT_TOKENS = [
+  { text: 'flavor', score: '+0.94', type: 'pos' },
+  { text: 'packaging', score: '-0.81', type: 'neg' },
+  { text: 'portion', score: '~0.04', type: 'neu' },
+  { text: 'authentic', score: '+0.89', type: 'pos' },
+];
+
+export function SentimentAnalysisVisual({ isHovered }) {
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none flex flex-col justify-between overflow-hidden p-5"
+      style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(251,179,193,0.04) 0%, rgb(10,12,18) 85%)' }}
+    >
+      {/* Background Neural Grid */}
+      <div className="absolute inset-0 opacity-15" style={{
+        backgroundImage: 'radial-gradient(rgba(251,179,193,0.35) 1px, transparent 1px)',
+        backgroundSize: '14px 14px'
+      }} />
+
+      {/* Top Token Attention Stream */}
+      <div className="relative z-10 flex flex-wrap gap-1.5 pt-1">
+        {SENTIMENT_TOKENS.map((token, idx) => {
+          const isPos = token.type === 'pos';
+          const isNeg = token.type === 'neg';
+          const color = isPos ? 'rgba(74, 222, 128, 0.95)' : isNeg ? 'rgba(248, 113, 113, 0.95)' : 'rgba(251, 191, 36, 0.95)';
+          const bg = isPos ? 'rgba(74, 222, 128, 0.1)' : isNeg ? 'rgba(248, 113, 113, 0.1)' : 'rgba(251, 191, 36, 0.1)';
+          const border = isPos ? 'rgba(74, 222, 128, 0.25)' : isNeg ? 'rgba(248, 113, 113, 0.25)' : 'rgba(251, 191, 36, 0.25)';
+
+          return (
+            <motion.div
+              key={token.text}
+              initial={{ opacity: 0.75, y: 0 }}
+              animate={isHovered ? { opacity: [0.75, 1, 0.75], y: [0, -2, 0] } : { opacity: 0.75, y: 0 }}
+              transition={{ duration: 2, delay: idx * 0.2, repeat: Infinity }}
+              className="flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-mono tracking-wider backdrop-blur-xs"
+              style={{ background: bg, border: `1px solid ${border}`, color }}
+            >
+              <span>{token.text}</span>
+              <span className="text-[7px] opacity-70">{token.score}</span>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Middle: 3-Class Sentiment Confidence Meters */}
+      <div className="relative z-10 flex flex-col gap-1.5 py-1">
+        {/* Class 1: Positive */}
+        <div className="flex flex-col gap-0.5">
+          <div className="flex justify-between items-center text-[8px] font-mono text-white/60">
+            <span className="text-emerald-400 font-medium">POSITIVE (4-5★)</span>
+            <span className="text-emerald-300">90%</span>
+          </div>
+          <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden border border-white/10">
+            <motion.div
+              className="h-full rounded-full bg-linear-to-r from-emerald-500 to-teal-400"
+              initial={{ width: '78%' }}
+              animate={isHovered ? { width: '90%' } : { width: '78%' }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            />
+          </div>
+        </div>
+
+        {/* Class 2: Neutral */}
+        <div className="flex flex-col gap-0.5">
+          <div className="flex justify-between items-center text-[8px] font-mono text-white/60">
+            <span className="text-amber-400 font-medium">NEUTRAL (3★)</span>
+            <span className="text-amber-300">48% F1</span>
+          </div>
+          <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden border border-white/10">
+            <motion.div
+              className="h-full rounded-full bg-linear-to-r from-amber-500 to-yellow-400"
+              initial={{ width: '35%' }}
+              animate={isHovered ? { width: '48%' } : { width: '35%' }}
+              transition={{ duration: 0.8, delay: 0.1, ease: 'easeOut' }}
+            />
+          </div>
+        </div>
+
+        {/* Class 3: Negative */}
+        <div className="flex flex-col gap-0.5">
+          <div className="flex justify-between items-center text-[8px] font-mono text-white/60">
+            <span className="text-rose-400 font-medium">NEGATIVE (1-2★)</span>
+            <span className="text-rose-300">86%</span>
+          </div>
+          <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden border border-white/10">
+            <motion.div
+              className="h-full rounded-full bg-linear-to-r from-rose-500 to-red-400"
+              initial={{ width: '62%' }}
+              animate={isHovered ? { width: '86%' } : { width: '62%' }}
+              transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Model Spec Badge */}
+      <div className="relative z-10 flex items-center justify-between text-[8px] font-mono text-white/40 border-t border-white/5 pt-1.5">
+        <span>DistilBERT Fine-Tuned</span>
+        <span className="text-white/60">568k Reviews</span>
+      </div>
+
+      {/* Scanner Sweep */}
+      <motion.div
+        className="absolute left-0 w-full pointer-events-none"
+        style={{
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent, rgba(74, 222, 128, 0.35), transparent)',
+          zIndex: 10,
+        }}
+        animate={isHovered ? { top: ['0%', '100%'] } : { top: '0%' }}
+        transition={{ duration: 2.8, repeat: Infinity, ease: 'linear' }}
+      />
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // CARD 3: Ecommerce Platform — Product Grid with Scan Line
 // ─────────────────────────────────────────────
 export function EcommerceVisual({ isHovered }) {

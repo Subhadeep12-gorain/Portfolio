@@ -64,7 +64,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
   };
 
   return (
-    <section id="contact" className="relative w-full max-w-5xl mx-auto py-12 overflow-hidden rounded-3xl min-h-[70vh] flex flex-col justify-center">
+    <section id="contact" className="relative w-full max-w-5xl mx-auto py-8 md:py-12 overflow-hidden rounded-3xl min-h-[70vh] flex flex-col justify-center">
       {/* Background Glow — Bottom */}
       <div
         className="absolute inset-0 pointer-events-none z-0"
@@ -243,7 +243,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
               boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
               border: `1px solid hsla(${themeHue}, 70%, 65%, 0.18)`
             }}
-            className="w-full aspect-square md:aspect-auto flex flex-col justify-center backdrop-blur-md bg-white/[0.02] rounded-2xl p-5 md:p-10 relative overflow-hidden"
+            className="w-full flex flex-col justify-center backdrop-blur-md bg-white/[0.02] rounded-2xl p-6 sm:p-8 md:p-10 relative overflow-hidden"
           >
             {/* The Firefly Overlay that tracks the focused input */}
             <FireflyOverlay targetRect={focusedInputRect} themeHue={themeHue} />
@@ -271,7 +271,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
                   hidden: { opacity: 0, y: 10 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
                 }}
-                className="flex flex-col gap-2"
+                className="flex flex-col gap-1.5"
               >
                 <label className="text-[10px] font-label-sm text-[#d6c2c4]/50 tracking-[0.25em] uppercase">
                   {t('contact.name_label')}
@@ -292,7 +292,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
                     e.target.style.borderBottomColor = `hsla(${themeHue}, 60%, 65%, 0.22)`;
                     e.target.style.boxShadow = 'none';
                   }}
-                  className="w-full bg-transparent border-0 border-b text-white font-body-md px-0 py-2 focus:outline-hidden focus:ring-0 transition-all duration-300 placeholder-white/20 text-base relative"
+                  className="w-full bg-transparent border-0 border-b text-white font-body-md px-0 py-2 focus:outline-hidden focus:ring-0 transition-all duration-300 placeholder-white/20 text-sm sm:text-base relative"
                   style={{ borderBottomColor: `hsla(${themeHue}, 60%, 65%, 0.22)`, boxShadow: 'none' }}
                 />
               </motion.div>
@@ -303,7 +303,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
                   hidden: { opacity: 0, y: 10 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
                 }}
-                className="flex flex-col gap-2"
+                className="flex flex-col gap-1.5"
               >
                 <label className="text-[10px] font-label-sm text-[#d6c2c4]/50 tracking-[0.25em] uppercase">
                   {t('contact.email_label')}
@@ -324,7 +324,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
                     e.target.style.borderBottomColor = `hsla(${themeHue}, 60%, 65%, 0.22)`;
                     e.target.style.boxShadow = 'none';
                   }}
-                  className="w-full bg-transparent border-0 border-b text-white font-body-md px-0 py-2 focus:outline-hidden focus:ring-0 transition-all duration-300 placeholder-white/20 text-base relative"
+                  className="w-full bg-transparent border-0 border-b text-white font-body-md px-0 py-2 focus:outline-hidden focus:ring-0 transition-all duration-300 placeholder-white/20 text-sm sm:text-base relative"
                   style={{ borderBottomColor: `hsla(${themeHue}, 60%, 65%, 0.22)`, boxShadow: 'none' }}
                 />
               </motion.div>
@@ -335,13 +335,13 @@ export const ContactSection = ({ themeHue = 220 }) => {
                   hidden: { opacity: 0, y: 10 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
                 }}
-                className="flex flex-col gap-2"
+                className="flex flex-col gap-1.5"
               >
                 <label className="text-[10px] font-label-sm text-[#d6c2c4]/50 tracking-[0.25em] uppercase">
                   {t('contact.message_label')}
                 </label>
                 <textarea
-                  rows={4}
+                  rows={3}
                   required
                   placeholder={t('contact.message_ph')}
                   value={formData.message}
@@ -356,7 +356,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
                     e.target.style.borderBottomColor = `hsla(${themeHue}, 60%, 65%, 0.22)`;
                     e.target.style.boxShadow = 'none';
                   }}
-                  className="w-full bg-transparent border-0 border-b text-white font-body-md px-0 py-2 focus:outline-hidden focus:ring-0 transition-all duration-300 placeholder-white/20 text-base resize-none relative"
+                  className="w-full bg-transparent border-0 border-b text-white font-body-md px-0 py-2 focus:outline-hidden focus:ring-0 transition-all duration-300 placeholder-white/20 text-sm sm:text-base resize-none relative"
                   style={{ borderBottomColor: `hsla(${themeHue}, 60%, 65%, 0.22)`, boxShadow: 'none' }}
                 />
               </motion.div>
@@ -372,7 +372,7 @@ export const ContactSection = ({ themeHue = 220 }) => {
                 <button
                   type="submit"
                   disabled={submitState === 'sending'}
-                  className="w-full py-3 rounded-full border transition-all duration-300 cursor-pointer font-body-md text-xs tracking-[0.25em] font-semibold text-white relative overflow-hidden"
+                  className="w-full py-3.5 rounded-full border transition-all duration-300 cursor-pointer font-body-md text-xs tracking-[0.25em] font-semibold text-white relative overflow-hidden"
                   style={submitState === 'sent'
                     ? { borderColor: `hsl(${themeHue}, 75%, 72%)`, background: `hsla(${themeHue}, 70%, 65%, 0.28)`, boxShadow: `0 0 20px hsla(${themeHue}, 70%, 65%, 0.28)` }
                     : submitState === 'sending'

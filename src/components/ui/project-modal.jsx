@@ -46,9 +46,18 @@ const KineticCounter = ({ value, suffix = "", themeHue }) => {
     };
   }, [value]);
 
+  const isShortSymbol = suffix.trim() === '%' || suffix.trim() === '+' || suffix.trim().length <= 2;
+
   return (
-    <div ref={nodeRef} className="font-headline-lg font-light tracking-tighter" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', color: `hsl(${themeHue}, 75%, 75%)`, lineHeight: 1 }}>
-      {count}{suffix}
+    <div ref={nodeRef} className="flex items-baseline flex-wrap gap-x-3 gap-y-1" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>
+      <span className="font-headline-lg font-light tracking-tighter" style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', lineHeight: 1 }}>
+        {count}{isShortSymbol ? suffix.trim() : ''}
+      </span>
+      {!isShortSymbol && suffix && (
+        <span className="font-headline-sm font-normal text-xl md:text-2xl text-white/80 tracking-normal">
+          {suffix.trim()}
+        </span>
+      )}
     </div>
   );
 };
@@ -255,10 +264,12 @@ export const ProjectModal = ({ project, themeHue, onClose, lowPowerMode = false 
                   03 — The Impact
                 </h3>
                 
-                <div className="flex flex-col md:flex-row items-baseline gap-4 md:gap-8 p-8 md:p-12 rounded-2xl bg-white/5 border border-white/5">
-                  <KineticCounter value={project.metric.value} suffix={project.metric.unit} themeHue={themeHue} />
-                  <div className="flex-1">
-                    <p className="font-body-lg text-xl md:text-2xl text-white/70 font-light leading-relaxed">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 p-6 md:p-10 rounded-2xl bg-white/5 border border-white/10">
+                  <div className="shrink-0 max-w-full">
+                    <KineticCounter value={project.metric.value} suffix={project.metric.unit} themeHue={themeHue} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-body-lg text-lg md:text-xl text-white/80 font-light leading-relaxed">
                       {project.metric.label}
                     </p>
                   </div>
@@ -278,19 +289,19 @@ export const ProjectModal = ({ project, themeHue, onClose, lowPowerMode = false 
                 04 — Live Links
               </h3>
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {project.github && (
                   <a 
                     href={project.github} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex-1 p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-between group transition-all"
+                    className="p-5 md:p-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-between group transition-all"
                   >
-                    <div>
-                      <h4 className="font-body-lg text-white text-lg mb-1">Source Code</h4>
-                      <p className="font-label-sm text-xs text-white/50">View repository on GitHub</p>
+                    <div className="min-w-0 pr-2">
+                      <h4 className="font-body-lg text-white text-base md:text-lg mb-0.5 truncate">Source Code</h4>
+                      <p className="font-label-sm text-xs text-white/50 truncate">View repository on GitHub</p>
                     </div>
-                    <span className="material-symbols-outlined text-white/40 group-hover:text-white transition-colors transform group-hover:translate-x-1 group-hover:-translate-y-1">arrow_outward</span>
+                    <span className="material-symbols-outlined text-white/40 group-hover:text-white transition-colors transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0">arrow_outward</span>
                   </a>
                 )}
                 
@@ -299,17 +310,17 @@ export const ProjectModal = ({ project, themeHue, onClose, lowPowerMode = false 
                     href={project.demo} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex-1 p-6 rounded-xl border flex items-center justify-between group transition-all"
+                    className="p-5 md:p-6 rounded-xl border flex items-center justify-between group transition-all"
                     style={{ 
                       borderColor: `hsla(${themeHue}, 70%, 65%, 0.3)`, 
                       background: `hsla(${themeHue}, 70%, 65%, 0.1)` 
                     }}
                   >
-                    <div>
-                      <h4 className="font-body-lg text-white text-lg mb-1">Live Demo</h4>
-                      <p className="font-label-sm text-xs text-white/60">Experience the project</p>
+                    <div className="min-w-0 pr-2">
+                      <h4 className="font-body-lg text-white text-base md:text-lg mb-0.5 truncate">Live Demo</h4>
+                      <p className="font-label-sm text-xs text-white/60 truncate">Experience the project</p>
                     </div>
-                    <span className="material-symbols-outlined transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>arrow_outward</span>
+                    <span className="material-symbols-outlined transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform shrink-0" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>arrow_outward</span>
                   </a>
                 )}
                 
@@ -318,17 +329,17 @@ export const ProjectModal = ({ project, themeHue, onClose, lowPowerMode = false 
                     href={project.biDashboard} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex-1 p-6 rounded-xl border flex items-center justify-between group transition-all"
+                    className="p-5 md:p-6 rounded-xl border flex items-center justify-between group transition-all"
                     style={{ 
                       borderColor: `hsla(${themeHue}, 70%, 65%, 0.3)`, 
                       background: `hsla(${themeHue}, 70%, 65%, 0.1)` 
                     }}
                   >
-                    <div>
-                      <h4 className="font-body-lg text-white text-lg mb-1">BI Dashboard</h4>
-                      <p className="font-label-sm text-xs text-white/60">View Power BI Report</p>
+                    <div className="min-w-0 pr-2">
+                      <h4 className="font-body-lg text-white text-base md:text-lg mb-0.5 truncate">BI Dashboard</h4>
+                      <p className="font-label-sm text-xs text-white/60 truncate">View Power BI Report</p>
                     </div>
-                    <span className="material-symbols-outlined transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>arrow_outward</span>
+                    <span className="material-symbols-outlined transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform shrink-0" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>arrow_outward</span>
                   </a>
                 )}
                 
@@ -337,17 +348,17 @@ export const ProjectModal = ({ project, themeHue, onClose, lowPowerMode = false 
                     href={project.biGithub} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex-1 p-6 rounded-xl border flex items-center justify-between group transition-all"
+                    className="p-5 md:p-6 rounded-xl border flex items-center justify-between group transition-all"
                     style={{ 
                       borderColor: `hsla(${themeHue}, 70%, 65%, 0.3)`, 
                       background: `hsla(${themeHue}, 70%, 65%, 0.1)` 
                     }}
                   >
-                    <div>
-                      <h4 className="font-body-lg text-white text-lg mb-1">BI Source</h4>
-                      <p className="font-label-sm text-xs text-white/60">Dashboard Repo</p>
+                    <div className="min-w-0 pr-2">
+                      <h4 className="font-body-lg text-white text-base md:text-lg mb-0.5 truncate">BI Source</h4>
+                      <p className="font-label-sm text-xs text-white/60 truncate">Dashboard Repo</p>
                     </div>
-                    <span className="material-symbols-outlined transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>arrow_outward</span>
+                    <span className="material-symbols-outlined transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform shrink-0" style={{ color: `hsl(${themeHue}, 75%, 75%)` }}>arrow_outward</span>
                   </a>
                 )}
               </div>
