@@ -242,7 +242,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="absolute left-[5%] top-[32%] z-20 pointer-events-auto scale-[0.65] origin-top-left md:hidden"
+          className="absolute left-[5%] top-[18%] z-20 pointer-events-auto scale-[0.65] origin-top-left md:hidden"
           style={{ overflow: 'visible' }}
         >
           <MobileCyclingBadge pairs={leftPairs} floatDelay={0} />
@@ -279,7 +279,7 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="absolute right-[5%] top-[32%] z-20 pointer-events-auto scale-[0.65] origin-top-right md:hidden"
+          className="absolute right-[5%] top-[18%] z-20 pointer-events-auto scale-[0.65] origin-top-right md:hidden"
           style={{ overflow: 'visible' }}
         >
           <MobileCyclingBadge pairs={rightPairs} floatDelay={2.4} />
