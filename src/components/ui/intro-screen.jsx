@@ -576,7 +576,7 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                     lineHeight: 1,
                     textShadow: `0 0 50px hsla(${themeHue}, 100%, 72%, 0.35)`,
                   }}>
-                    夜桜
+                    光路
                   </div>
                   <div style={{
                     fontFamily: "'Space Grotesk', sans-serif",
@@ -586,7 +586,7 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                     marginTop: '0.9rem',
                     textTransform: 'uppercase',
                   }}>
-                    Sakura Nocturne
+                    Kouji
                   </div>
                 </motion.div>
               )}
@@ -655,7 +655,7 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                           lineHeight: 1,
                           textShadow: `0 0 50px hsla(${themeHue}, 100%, 72%, 0.35)`,
                         }}>
-                          夜桜
+                          光路
                         </div>
                         <div style={{
                           fontFamily: "'Space Grotesk', sans-serif",
@@ -665,7 +665,7 @@ const IntroScreen = forwardRef(({ onComplete, themeHue = 220 }, ref) => {
                           marginTop: '0.9rem',
                           textTransform: 'uppercase',
                         }}>
-                          Sakura Nocturne
+                          Kouji
                         </div>
                       </div>
                     )}

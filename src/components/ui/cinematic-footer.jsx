@@ -96,7 +96,7 @@ export function CinematicFooter() {
             className="text-4xl md:text-6xl text-white tracking-[0.3em] uppercase"
             style={{ fontFamily: "'EB Garamond', serif" }}
           >
-            夜桜
+            光路
           </h2>
           <p
             className="text-sm md:text-base italic"
@@ -105,7 +105,7 @@ export function CinematicFooter() {
               color: 'rgba(251, 179, 193, 0.75)',
             }}
           >
-            Sakura Nocturne — AI/ML Engineering Portfolio
+            Kouji — AI/ML Engineering Portfolio
           </p>
         </motion.div>
 

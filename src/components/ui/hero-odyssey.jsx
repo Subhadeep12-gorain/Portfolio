@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { LiquidButton } from './liquid-button';
 import { SplitHeading } from './split-heading';
@@ -167,16 +167,6 @@ const BadgeContent = ({ name, value, floatDelay = 0 }) => (
 // ─────────────────────────────────────────────────────────────────────────────
 // Animation variants
 // ─────────────────────────────────────────────────────────────────────────────
-const leftBadgeVariants = {
-  visible: { x: 0, opacity: 1, transition: { duration: 1.6, ease: [0.25, 1, 0.5, 1] } },
-  hidden:  { x: '-130vw', opacity: 0, transition: { duration: 1.0, ease: [0.55, 0, 1, 0.45] } },
-};
-
-const rightBadgeVariants = {
-  visible: { x: 0, opacity: 1, transition: { duration: 1.6, ease: [0.25, 1, 0.5, 1] } },
-  hidden:  { x: '130vw', opacity: 0, transition: { duration: 1.0, ease: [0.55, 0, 1, 0.45] } },
-};
-
 const nameVariants = {
   visible: { scale: 1, y: 0, opacity: 1, transition: { duration: 2.0, ease: [0.25, 1, 0.5, 1] } },
   hidden:  { scale: 0.12, y: 200, opacity: 0, transition: { duration: 1.2, ease: [0.55, 0, 1, 0.45] } },
@@ -194,113 +184,129 @@ const entryVariants = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// MobileCyclingBadge — shows only 2 badges on mobile, cycling text every 4s
+// ─────────────────────────────────────────────────────────────────────────────
+const MobileCyclingBadge = ({ pairs, floatDelay }) => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex(i => (i + 1) % pairs.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [pairs.length]);
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.4 }}
+      >
+        <BadgeContent name={pairs[index].name} value={pairs[index].value} floatDelay={floatDelay} />
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // HeroSection
 // ─────────────────────────────────────────────────────────────────────────────
 export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
   const heroRef = useRef(null);
   const { t } = useTranslation();
 
-  const leftCtrl  = useAnimation();
-  const rightCtrl = useAnimation();
+  // All animation controls — badges and name/label no longer respond to scroll
   const nameCtrl  = useAnimation();
   const labelCtrl = useAnimation();
 
-  const badgesInView = useRef(true);
-  const nameInView = useRef(true);
-
   useEffect(() => {
-    leftCtrl.start('visible');
-    rightCtrl.start('visible');
     nameCtrl.start('visible');
     labelCtrl.start('visible');
-  }, [leftCtrl, rightCtrl, nameCtrl, labelCtrl]);
+  }, [nameCtrl, labelCtrl]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const triggerBadges = 90;
-      const triggerName = 250;
-
-      if (window.scrollY > triggerBadges && badgesInView.current) {
-        badgesInView.current = false;
-        leftCtrl.start('hidden');
-        rightCtrl.start('hidden');
-      } else if (window.scrollY <= triggerBadges && !badgesInView.current) {
-        badgesInView.current = true;
-        leftCtrl.start('visible');
-        rightCtrl.start('visible');
-      }
-
-      if (window.scrollY > triggerName && nameInView.current) {
-        nameInView.current = false;
-        labelCtrl.start('hidden');
-        nameCtrl.start('hidden');
-      } else if (window.scrollY <= triggerName && !nameInView.current) {
-        nameInView.current = true;
-        nameCtrl.start('visible');
-        labelCtrl.start('visible');
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [leftCtrl, rightCtrl, nameCtrl, labelCtrl]);
+  // Mobile badge cycling pairs
+  const leftPairs  = [{ name: 'Python', value: 'Full-Stack' }, { name: 'Data Analytics', value: 'Power BI' }];
+  const rightPairs = [{ name: 'JLPT N4', value: 'Japan' }, { name: 'Data Science', value: 'Pandas / XGBoost' }];
 
   return (
     <div ref={heroRef} className="relative w-full bg-transparent text-white min-h-screen" style={{ overflow: 'visible' }}>
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 h-screen flex flex-col justify-center" style={{ overflow: 'visible' }}>
 
+        {/* ── LEFT badges ─────────────────────────────────────────────────── */}
+        {/* Mobile: 1 cycling badge on the left (top-left position) */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="absolute left-[5%] top-[32%] md:left-10 md:top-40 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-left"
+          className="absolute left-[5%] top-[32%] z-20 pointer-events-auto scale-[0.65] origin-top-left md:hidden"
           style={{ overflow: 'visible' }}
         >
-          <motion.div animate={leftCtrl} variants={leftBadgeVariants} initial="visible">
-            <BadgeContent name="Data Analytics" value="Power BI" floatDelay={0} />
-          </motion.div>
+          <MobileCyclingBadge pairs={leftPairs} floatDelay={0} />
         </motion.div>
 
+        {/* Desktop: static left-bottom badge */}
+        <motion.div
+          variants={entryVariants}
+          initial="hidden"
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="absolute left-10 top-40 z-20 pointer-events-auto hidden md:block"
+          style={{ overflow: 'visible' }}
+        >
+          <BadgeContent name="Data Analytics" value="Power BI" floatDelay={0} />
+        </motion.div>
+
+        {/* Desktop: static left-top badge */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.35 }}
-          className="absolute left-[18%] top-[18%] md:left-1/4 md:top-24 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-left"
+          className="absolute left-1/4 top-24 z-20 pointer-events-auto hidden md:block"
           style={{ overflow: 'visible' }}
         >
-          <motion.div animate={leftCtrl} variants={leftBadgeVariants} initial="visible">
-            <BadgeContent name="Python" value="Full-Stack" floatDelay={1.2} />
-          </motion.div>
+          <BadgeContent name="Python" value="Full-Stack" floatDelay={1.2} />
         </motion.div>
 
+        {/* ── RIGHT badges ────────────────────────────────────────────────── */}
+        {/* Mobile: 1 cycling badge on the right (top-right position) */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="absolute right-[5%] top-[32%] md:right-10 md:top-40 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-right"
+          className="absolute right-[5%] top-[32%] z-20 pointer-events-auto scale-[0.65] origin-top-right md:hidden"
           style={{ overflow: 'visible' }}
         >
-          <motion.div animate={rightCtrl} variants={rightBadgeVariants} initial="visible">
-            <BadgeContent name="Data Science" value="Pandas / XGBoost" floatDelay={2.4} />
-          </motion.div>
+          <MobileCyclingBadge pairs={rightPairs} floatDelay={2.4} />
         </motion.div>
 
+        {/* Desktop: static right-bottom badge */}
+        <motion.div
+          variants={entryVariants}
+          initial="hidden"
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="absolute right-10 top-40 z-20 pointer-events-auto hidden md:block"
+          style={{ overflow: 'visible' }}
+        >
+          <BadgeContent name="Data Science" value="Pandas / XGBoost" floatDelay={2.4} />
+        </motion.div>
+
+        {/* Desktop: static right-top badge */}
         <motion.div
           variants={entryVariants}
           initial="hidden"
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.65 }}
-          className="absolute right-[18%] top-[18%] md:right-1/4 md:top-24 z-20 pointer-events-auto scale-[0.65] md:scale-100 origin-top-right"
+          className="absolute right-1/4 top-24 z-20 pointer-events-auto hidden md:block"
           style={{ overflow: 'visible' }}
         >
-          <motion.div animate={rightCtrl} variants={rightBadgeVariants} initial="visible">
-            <BadgeContent name="JLPT N4" value="Japan" floatDelay={3.6} />
-          </motion.div>
+          <BadgeContent name="JLPT N4" value="Japan" floatDelay={3.6} />
         </motion.div>
 
         <motion.div
@@ -388,20 +394,20 @@ export const HeroSection = ({ themeHue = 230, onExploreClick }) => {
         </motion.div>
       </div>
 
-      {/* ── Background elements ─────────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0 z-0 pointer-events-none"
-        >
-          {/* Transparent overlay — let GlobalWeatherManager show through */}
-          <div className="absolute inset-0 bg-black/30" />
-          <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-b from-pink-500/8 to-purple-600/8 blur-3xl" />
+      {/* ── Background elements — fade in ONCE on mount, then stay permanently ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}
+      >
+        {/* Transparent overlay — let GlobalWeatherManager show through */}
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-b from-pink-500/8 to-purple-600/8 blur-3xl" />
         <div className="absolute top-0 w-[100%] left-1/2 transform -translate-x-1/2 h-full pointer-events-none">
           <Lightning hue={themeHue} xOffset={0} speed={1.2} intensity={0.5} size={1.5} />
         </div>
-        
+
         {/* Planet/sphere orb + aura glow */}
         <div className="z-10 absolute top-[70%] left-1/2 transform -translate-x-1/2 w-[800px] h-[800px] backdrop-blur-3xl rounded-full bg-[radial-gradient(circle_at_50%_90%,_#2e0c1f_15%,_#000000de_70%,_#000000ed_100%)] overflow-hidden">
           <div
